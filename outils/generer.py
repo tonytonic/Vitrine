@@ -35,7 +35,7 @@ def head(title, desc, path, og_type='article', extra_ld=()):
 <meta name="theme-color" content="#2A1238">
 <link rel="icon" href="assets/img/icon-192.png"><link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="preload" href="assets/fonts/outfit-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=1">
+<link rel="stylesheet" href="assets/site.css?v=3">
 {ld}
 </head><body>'''
 
@@ -52,12 +52,12 @@ def footer():
     dst = '<div><b>Destinations</b><a href="destinations">Toutes les destinations</a>' + ''.join(f'<a href="{DST.th_slug(t)}">{E(DST.THEMES[t][0])}</a>' for t in ['plage', 'ville', 'nature', 'romantique']) + ''.join(f'<a href="{DST.mo_slug(m)}">Où partir en {DST.MOIS[m-1]}</a>' for m in NEXT3) + '</div>'
     return f'''<footer class="foot"><div class="air"></div><div class="wrap"><div class="fcols">{dst}{cols}</div>
 <div class="fbot"><span>Vezoria · le carnet de voyage qu’on remplit à plusieurs</span><span><a href="guides">Tous les guides</a> · <a href="guide-utilisateur">Mode d’emploi</a> · <a href="{LEGAL}">Mentions légales</a> · <a href="{PRIV}">Confidentialité</a></span></div></div></footer>
-<script src="assets/site.js?v=1" defer></script></body></html>'''
+<script src="assets/site.js?v=3" defer></script></body></html>'''
 
 def slug_cat(c): return DST.slugify(c)
 ICON = {'Découvrir':'✨','Préparer':'🧭','Types de voyage':'🧳','Budget':'💸','Checklists':'✅','Partager':'👀','Voyager':'📍','Se souvenir':'📸','L’appli':'📱','Destinations':'🌍'}
 def acc(title, inner, n=None, icon='', id_='', open_=False):
-    return f'<details class="acc"{" id=" + chr(34) + id_ + chr(34) if id_ else ""}{" open" if open_ else ""}><summary><span class="ai">{icon}</span>{E(title)}{f"<small>{n}</small>" if n is not None else ""}</summary><div class="acc-in">{inner}</div></details>'
+    return f'<details class="acc"{" id=" + chr(34) + id_ + chr(34) if id_ else ""}{" open" if open_ else ""}><summary><span class="ai">{icon}</span>{E(title)}</summary><div class="acc-in">{inner}</div></details>'
 NEXT3 = [((datetime.date.today().month - 1 + k) % 12) + 1 for k in range(1, 4)]
 
 def phone(img, alt):
@@ -124,8 +124,8 @@ for r in DST.REGION:
     L = [x for x in DST.D if DST.REG.get(x[2]) == r]
     if L: reg += acc(r, '<div class="cards">' + ''.join(card(BY[DST.dslug(x)]) for x in sorted(L, key=lambda x: x[0])) + '</div>', len(L), '🌍', DST.slugify(r))
 hub = {'slug': 'destinations', 'cat': 'Destinations', 'title': f'Où partir ? {len(DST.D)} destinations : période, durée, budget', 'desc': BY['destinations']['desc'], 'h1': 'Où partir ? Toutes les destinations', 'lead': 'Pour chaque destination : la meilleure période, la météo mois par mois, la durée idéale, un itinéraire type, le budget par jour et les formalités.'}
-mo = ''.join(f'<a class="chip" href="{q["slug"]}">{E(DST.MOIS[i].capitalize())} · {q["count"]}</a>' for i, q in enumerate(MPAGES))
-th = ''.join(f'<a class="chip" href="{q["slug"]}">{E(q["h1"])} · {q["count"]}</a>' for q in TPAGES)
+mo = ''.join(f'<a class="chip" href="{q["slug"]}">{E(DST.MOIS[i].capitalize())} </a>' for i, q in enumerate(MPAGES))
+th = ''.join(f'<a class="chip" href="{q["slug"]}">{E(q["h1"])} </a>' for q in TPAGES)
 write('destinations.html', simple_page(hub, f'<section class="block"><h2>Par mois</h2><div class="chips">{mo}</div></section><section class="block"><h2>Par envie</h2><div class="chips">{th}</div></section><section class="block"><h2>Par région</h2>{reg}</section>'))
 
 # hub guides
@@ -172,8 +172,8 @@ home = head('Vezoria · carnet de voyage partagé, gratuit et sans pub', 'Vezori
 <main class="wrap"><section class="block"><h2>Tout le voyage, au même endroit</h2><div class="feats">{fhtml}</div></section>
 <section class="block three"><div><span class="ph3">🧳</span><b>Avant</b><p>On prépare ensemble : étapes, hôtels, trajets, budget, valise.</p></div><div><span class="ph3">📍</span><b>Pendant</b><p>Les billets en un geste, les dépenses notées, la journée racontée.</p></div><div><span class="ph3">🗺️</span><b>Après</b><p>Les souvenirs, le bilan, le film et l’album du voyage.</p></div></section>
 <section class="block"><h2>Où partir ?</h2><p>{len(DST.D)} destinations avec la meilleure période, la météo mois par mois, la durée idéale, le budget et les formalités.</p>
-{acc('Où partir selon le mois', '<div class="chips">' + ''.join(f'<a class="chip" href="{q["slug"]}">{E(DST.MOIS[i].capitalize())} · {q["count"]}</a>' for i, q in enumerate(MPAGES)) + '</div>', 12, '📅')}
-{acc('Où partir selon ses envies', '<div class="chips">' + ''.join(f'<a class="chip" href="{q["slug"]}">{E(q["h1"])} · {q["count"]}</a>' for q in TPAGES) + '</div>', len(TPAGES), '💡')}
+{acc('Où partir selon le mois', '<div class="chips">' + ''.join(f'<a class="chip" href="{q["slug"]}">{E(DST.MOIS[i].capitalize())} </a>' for i, q in enumerate(MPAGES)) + '</div>', 12, '📅')}
+{acc('Où partir selon ses envies', '<div class="chips">' + ''.join(f'<a class="chip" href="{q["slug"]}">{E(q["h1"])} </a>' for q in TPAGES) + '</div>', len(TPAGES), '💡')}
 {"".join(acc(r, '<div class="cards">' + "".join(card(BY[DST.dslug(x)]) for x in sorted([x for x in DST.D if DST.REG.get(x[2]) == r], key=lambda x: x[0])) + '</div>', len([x for x in DST.D if DST.REG.get(x[2]) == r]), '🌍') for r in DST.REGION if any(DST.REG.get(x[2]) == r for x in DST.D))}
 </section>
 <section class="block" id="guides"><h2>Les guides</h2><p>Touche une rubrique pour l’ouvrir.</p>{groups}</section>
