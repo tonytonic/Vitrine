@@ -74,3 +74,16 @@ main .cta small{text-align:center}
 .vz-go{display:block;text-align:center;background:var(--navy)!important;color:#fff!important}
 .vz-two{display:flex;flex-direction:column;gap:10px}.vz-small{font-size:.85rem;color:var(--gray);text-align:center}
 .vz-warn{background:#fff3d6;border:1px solid #f0d58a;border-radius:12px;padding:10px 12px;font-size:.92rem}
+.vz-fnav{position:fixed;right:14px;bottom:calc(14px + env(safe-area-inset-bottom));z-index:30;display:flex;flex-direction:column;gap:8px;opacity:0;pointer-events:none;transition:opacity .25s}
+.vz-fnav.on{opacity:1;pointer-events:auto}
+.vz-f{display:flex;flex-direction:column;align-items:center;justify-content:center;width:56px;height:56px;border-radius:18px;border:0;background:var(--navy);color:#fff;font:700 1.25rem/1 'Outfit',sans-serif;text-decoration:none;box-shadow:0 6px 18px rgba(42,18,56,.35);cursor:pointer;outline:2px solid rgba(255,255,255,.85);outline-offset:-2px}
+.vz-f span{font-size:.62rem;font-weight:600;margin-top:3px;opacity:.9}
+.vz-up{background:var(--rose);display:none}.vz-up.on{display:flex}
+/* rubriques dépliantes */
+.acc{background:#fff;border-radius:18px;margin:10px 0;box-shadow:0 4px 14px rgba(60,40,20,.08);overflow:hidden}
+.acc>summary{display:flex;align-items:center;gap:12px;padding:16px 18px;cursor:pointer;list-style:none;font:italic 600 1.25rem/1.2 'Bodoni Moda',serif;color:var(--navy2)}
+.acc>summary::-webkit-details-marker{display:none}
+.acc>summary .ai{font-style:normal;font-size:1.4rem}.acc>summary small{margin-left:auto;font:600 .8rem 'Outfit',sans-serif;color:var(--gray);background:#f4edf8;border-radius:99px;padding:3px 10px}
+.acc>summary::after{content:'▾';font-style:normal;font-size:1rem;color:var(--rose);transition:transform .2s}.acc[open]>summary::after{transform:rotate(180deg)}
+.acc>.acc-in{padding:0 16px 16px}
+.acc .cards{margin-top:4px}

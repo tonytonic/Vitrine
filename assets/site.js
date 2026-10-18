@@ -36,3 +36,25 @@
     if(ios){ c.insertBefore(i, a); i.className = 'btn and'; a.className = 'btn ios'; a.style.display = 'none'; }
     else if(and){ i.style.display = 'none'; } });
 } catch(err){} })();
+
+/* Navigation flottante : ← Retour · Menu · ↑ Haut de page */
+(function(){ try {
+  var home = /\/(index(\.html)?)?$/.test(location.pathname);
+  var n = document.createElement('nav'); n.className = 'vz-fnav'; n.setAttribute('aria-label', 'Navigation');
+  n.innerHTML = (home ? '' : '<button type="button" class="vz-f" data-a="back" aria-label="Page précédente">←<span>Retour</span></button><a class="vz-f" href="./" aria-label="Retour au menu">☰<span>Menu</span></a>')
+    + '<button type="button" class="vz-f vz-up" data-a="top" aria-label="Remonter en haut de la page">↑<span>Haut</span></button>';
+  document.body.appendChild(n);
+  var back = n.querySelector('[data-a=back]');
+  if(back) back.onclick = function(){
+    var same = false; try { same = document.referrer && new URL(document.referrer).origin === location.origin; } catch(e){}
+    if(same && history.length > 1) history.back(); else location.href = './';
+  };
+  var up = n.querySelector('[data-a=top]');
+  up.onclick = function(){ window.scrollTo({top:0, behavior:'smooth'}); };
+  var tick = function(){ var y = window.scrollY || document.documentElement.scrollTop;
+    up.classList.toggle('on', y > 500); n.classList.toggle('on', y > 200 || !home); };
+  window.addEventListener('scroll', tick, {passive:true}); tick();
+  // les rubriques dépliantes : une ancre (#rubrique) ouvre la bonne
+  var openHash = function(){ var id = decodeURIComponent((location.hash || '').slice(1)); if(!id) return; var d = document.getElementById(id); if(d && d.tagName === 'DETAILS'){ d.open = true; d.scrollIntoView({block:'start'}); } };
+  window.addEventListener('hashchange', openHash); openHash();
+} catch(err){} })();
