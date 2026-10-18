@@ -64,3 +64,13 @@ main .cta small{text-align:center}
 .tbl{width:100%;border-collapse:collapse;background:#fff;border-radius:12px;overflow:hidden}.tbl th,.tbl td{text-align:left;padding:9px 12px;border-bottom:1px solid var(--line)}.tbl th{background:var(--navy);color:#fff}
 .foot a.more{opacity:1;color:#ffd6aa}
 @media (max-width:760px){.dl,.dh{grid-template-columns:1.6fr .7fr .9fr;}.dl span:nth-child(2),.dl span:nth-child(5),.dh span:nth-child(2),.dh span:nth-child(5){display:none}.months{height:120px}.mb b{font-size:.55rem}}
+#vz-sheet{position:fixed;inset:0;z-index:50;display:flex;align-items:flex-end;justify-content:center}
+#vz-sheet .vz-bg{position:absolute;inset:0;background:rgba(20,10,30,.55)}
+#vz-sheet .vz-card{position:relative;width:100%;max-width:480px;background:var(--cream);border-radius:24px 24px 0 0;padding:22px 20px calc(22px + env(safe-area-inset-bottom));box-shadow:0 -10px 30px rgba(0,0,0,.25)}
+@media (min-width:700px){#vz-sheet{align-items:center}#vz-sheet .vz-card{border-radius:24px}}
+#vz-sheet h2{font-size:1.6rem;color:var(--navy2);margin:0 30px 10px 0}
+.vz-x{position:absolute;top:14px;right:14px;width:34px;height:34px;border-radius:50%;border:0;background:#eee3f3;font-size:1rem;cursor:pointer}
+.vz-steps{padding-left:22px;margin:8px 0 16px}.vz-steps li{margin:8px 0}.vz-ic{display:inline-block;background:#fff;border:1px solid #ddd;border-radius:6px;padding:0 6px}
+.vz-go{display:block;text-align:center;background:var(--navy)!important;color:#fff!important}
+.vz-two{display:flex;flex-direction:column;gap:10px}.vz-small{font-size:.85rem;color:var(--gray);text-align:center}
+.vz-warn{background:#fff3d6;border:1px solid #f0d58a;border-radius:12px;padding:10px 12px;font-size:.92rem}
