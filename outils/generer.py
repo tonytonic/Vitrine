@@ -11,8 +11,12 @@ import destinations as DST
 SITE   = 'https://vezoria-site.pages.dev'          # ← l'adresse du site (sans / à la fin)
 APP    = 'https://vezoria.pages.dev/'                # l'appli (iPhone : à ajouter à l'écran d'accueil)
 PLAY   = 'https://play.google.com/store/apps/details?id=fr.vezoria.app'
-LEGAL  = 'https://vezoria.pages.dev/mentions-legales.html'
-PRIV   = 'https://vezoria.pages.dev/privacy.html'
+LEGAL  = 'mentions-legales'                          # pages du site (l’appli a les siennes)
+PRIV   = 'confidentialite'
+APP_LEGAL = 'https://vezoria.pages.dev/mentions-legales.html'
+APP_PRIV  = 'https://vezoria.pages.dev/privacy.html'
+CONTACT = 'appareils.treves6g@icloud.com'
+MAJ = '18 octobre 2026'
 TODAY  = datetime.date.today().isoformat()
 ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = html.escape
@@ -196,8 +200,38 @@ write('guide-utilisateur.html', guide)
 # ── 404 ──
 write('404.html', head('Page introuvable · Vezoria', 'Cette page n’existe pas.', '404', 'website') + topbar() + '<div class="hero"><div class="wrap"><h1>Page introuvable</h1><p class="lead">Cette page a dû partir en voyage. Retour à <a href="./" style="color:#fff">l’accueil</a>.</p></div><div class="air"></div></div><main class="wrap"><section class="block"><div class="cards">' + ''.join(card(p) for p in PAGES[:6]) + '</div></section></main>' + footer())
 
+
+# ── mentions légales et confidentialité DU SITE ──
+def legal_page(slug, title, desc, h1, body):
+    p = {'slug': slug, 'cat': 'Informations', 'title': title, 'desc': desc, 'h1': h1}
+    return head(title, desc, slug, 'website', [crumbs_ld(p)]) + topbar() + f"""
+<div class="hero"><div class="wrap"><nav class="crumbs"><a href="./">Vezoria</a> › <span>{E(h1)}</span></nav><h1>{E(h1)}</h1><p class="lead">Site d’information de Vezoria · dernière mise à jour : {MAJ}</p></div><div class="air"></div></div>
+<main class="wrap legal">{body}</main>""" + footer()
+
+write('mentions-legales.html', legal_page('mentions-legales', 'Mentions légales du site Vezoria', 'Mentions légales du site d’information Vezoria : éditeur, hébergement, propriété intellectuelle, responsabilité.', 'Mentions légales', f"""
+<section class="block"><p>Conformément aux articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l’économie numérique (LCEN), voici les mentions légales du présent site d’information consacré à Vezoria (ci-après « le Site »). L’application Vezoria a ses propres <a href="{APP_LEGAL}" rel="noopener">mentions légales</a>.</p></section>
+<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par un particulier, à titre personnel et non professionnel :</p><ul><li><b>Nom :</b> Anthony Chauvel</li><li><b>Qualité :</b> personne physique, éditeur non professionnel</li><li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul><p>Conformément à l’article 6-III-2 de la LCEN, l’éditeur non professionnel peut ne tenir à disposition du public que les éléments permettant de le contacter, son identité complète étant communiquée à l’hébergeur.</p></section>
+<section class="block"><h2>2. Directeur de la publication</h2><p>Anthony Chauvel.</p></section>
+<section class="block"><h2>3. Hébergement</h2><p>Le Site est hébergé par <b>GitHub Pages</b> : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis (github.com).</p></section>
+<section class="block"><h2>4. Objet du Site</h2><p>Le Site présente l’application gratuite Vezoria et propose des guides pratiques pour préparer un voyage à plusieurs. Il ne vend rien, ne contient aucune publicité et ne demande aucune inscription.</p></section>
+<section class="block"><h2>5. Informations indicatives</h2><p>Les informations des guides (périodes conseillées, températures moyennes, durées, budgets, formalités, règles de voyage) sont données <b>à titre indicatif</b>, comme ordres de grandeur et règles générales. Elles peuvent évoluer et ne remplacent pas les sources officielles (diplomatie.gouv.fr, service-public.fr, sites officiels des pays, des transporteurs et des prestataires), qu’il appartient à chacun de consulter avant de partir ou de réserver.</p></section>
+<section class="block"><h2>6. Responsabilité</h2><p>Le Site est fourni « en l’état ». L’éditeur ne saurait être tenu responsable d’une erreur ou d’une omission dans les informations publiées, d’une décision prise sur leur base, ni du contenu des sites externes vers lesquels le Site renvoie. Le Site est indépendant : il n’est ni affilié, ni partenaire, ni rémunéré par les sites mentionnés.</p></section>
+<section class="block"><h2>7. Propriété intellectuelle</h2><p>Les textes, captures d’écran de l’application, illustrations, le nom et le logo Vezoria sont la propriété de l’éditeur. Toute reproduction sans autorisation est interdite, sauf courte citation avec un lien vers le Site. Les captures montrent le voyage de démo de l’application : les personnes et les voyages y sont fictifs.</p></section>
+<section class="block"><h2>8. Données personnelles</h2><p>Le Site ne dépose aucun cookie et ne collecte aucune donnée personnelle : voir la <a href="confidentialite">politique de confidentialité</a>.</p></section>
+<section class="block"><h2>9. Droit applicable</h2><p>Les présentes mentions sont soumises au droit français.</p></section>"""))
+
+write('confidentialite.html', legal_page('confidentialite', 'Politique de confidentialité du site Vezoria', 'Le site Vezoria ne dépose aucun cookie, n’utilise aucun outil de mesure d’audience et ne collecte aucune donnée personnelle.', 'Politique de confidentialité', f"""
+<section class="block"><p>Cette politique concerne le présent site d’information. L’application Vezoria a sa propre <a href="{APP_PRIV}" rel="noopener">politique de confidentialité</a>.</p>
+<div class="feats"><div class="feat"><i>🍪</i><b>Aucun cookie</b><span>Ni cookie, ni traceur, ni stockage dans ton navigateur.</span></div><div class="feat"><i>📊</i><b>Aucune statistique</b><span>Pas de mesure d’audience, pas de Google Analytics.</span></div><div class="feat"><i>📢</i><b>Aucune publicité</b><span>Aucune régie, aucun réseau social intégré.</span></div><div class="feat"><i>📝</i><b>Aucun formulaire</b><span>Rien à remplir, aucun compte.</span></div></div></section>
+<section class="block"><h2>1. Responsable</h2><p>Anthony Chauvel, éditeur non professionnel — <a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
+<section class="block"><h2>2. Ce que le Site ne fait pas</h2><ul><li>Il ne dépose <b>aucun cookie</b> et n’utilise <b>aucun stockage</b> dans ton navigateur.</li><li>Il n’utilise <b>aucun outil de mesure d’audience</b> ni de publicité.</li><li>Il ne charge <b>aucun service extérieur</b> : polices, images et scripts sont hébergés sur le Site lui-même.</li><li>Il ne contient <b>aucun formulaire</b> et ne demande aucune information.</li></ul></section>
+<section class="block"><h2>3. Le petit script du Site</h2><p>Un script affiche le bon bouton d’installation (iPhone ou Android) et les boutons Retour, Menu et Haut de page. Pour savoir quel téléphone tu utilises, il lit le type de navigateur <b>directement dans ton navigateur</b> : rien n’est envoyé ni enregistré.</p></section>
+<section class="block"><h2>4. L’hébergeur</h2><p>Comme tout hébergeur, GitHub (GitHub Pages) reçoit des données techniques au moment où une page est demandée (notamment l’adresse IP), pour acheminer la page et assurer la sécurité du service. Ces données sont traitées par GitHub selon sa propre déclaration de confidentialité ; l’éditeur n’y a pas accès.</p></section>
+<section class="block"><h2>5. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria ou un site officiel, tu quittes le Site : la politique de confidentialité de ce site s’applique alors.</p></section>
+<section class="block"><h2>6. Tes droits</h2><p>Le Site ne conservant aucune donnée personnelle, il n’y a rien à consulter, rectifier ou effacer. Pour toute question : <a href="mailto:{CONTACT}">{CONTACT}</a>. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).</p></section>"""))
+
 # ── sitemap, robots ──
-urls = [('', '1.0', 'weekly'), ('guides', '0.9', 'weekly'), ('destinations', '0.9', 'weekly'), ('guide-utilisateur', '0.8', 'monthly')] + [(p['slug'], '0.8', 'monthly') for p in PAGES] + [(p['slug'], '0.7', 'monthly') for p in DPAGES + MPAGES + TPAGES + [PLUGP]]
+urls = [('', '1.0', 'weekly'), ('guides', '0.9', 'weekly'), ('destinations', '0.9', 'weekly'), ('guide-utilisateur', '0.8', 'monthly')] + [(p['slug'], '0.8', 'monthly') for p in PAGES] + [(p['slug'], '0.7', 'monthly') for p in DPAGES + MPAGES + TPAGES + [PLUGP]] + [('mentions-legales', '0.2', 'yearly'), ('confidentialite', '0.2', 'yearly')]
 write('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod><changefreq>{f}</changefreq><priority>{pr}</priority></url>\n' for u, pr, f in urls) + '</urlset>\n')
 write('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n')
 print(len(urls) + 1, 'pages générées')
