@@ -1,6 +1,6 @@
 /* Vezoria · site : bouton « Installer » et boutons d'installation selon le téléphone. Aucun pistage, aucun cookie. */
 (function(){ try {
-  var PLAY = 'https://play.google.com/store/apps/details?id=fr.vezoria.app', APP = 'https://vezoria.pages.dev/';
+  var PLAY = 'https://play.google.com/store/apps/details?id=fr.vezoria.app', APP = 'https://vezoria.pages.dev/';   // le jour du lancement, si l’appli passe sur app.vezoria.fr : changer APP ici et dans outils/generer.py
   var ua = navigator.userAgent || '';
   var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var and = /Android/i.test(ua);
@@ -57,4 +57,25 @@
   // les rubriques dépliantes : une ancre (#rubrique) ouvre la bonne
   var openHash = function(){ var id = decodeURIComponent((location.hash || '').slice(1)); if(!id) return; var d = document.getElementById(id); if(d && d.tagName === 'DETAILS'){ d.open = true; d.scrollIntoView({block:'start'}); } };
   window.addEventListener('hashchange', openHash); openHash();
+} catch(err){} })();
+
+/* ✉️ « Me prévenir du lancement » : envoi sans recharger la page (sans script, le formulaire marche quand même) */
+(function(){ try {
+  var MSG = {ok:'🎉 C’est noté ! Tu recevras un seul e-mail, le jour du lancement.', deja:'👍 Tu es déjà sur la liste : à très vite !', email:'⚠️ Cette adresse e-mail ne semble pas valide.', consent:'⚠️ Coche la case pour accepter de recevoir l’e-mail du lancement.', trop:'⏳ Trop d’essais : réessaie dans un moment.', erreur:'⚠️ Petit souci, réessaie dans un instant.', stop:'✅ Tu es désinscrit·e : ton adresse a été effacée.'};
+  document.querySelectorAll('form[data-wl]').forEach(function(f){
+    var src = f.querySelector('[name=source]'); if(src) src.value = (location.pathname.replace(/^\//, '') || 'accueil').slice(0, 80);
+    f.addEventListener('submit', function(e){
+      e.preventDefault(); var m = f.querySelector('.wl-msg'), b = f.querySelector('button[type=submit]');
+      var data = {}; new FormData(f).forEach(function(v, k){ data[k] = v; });
+      if(b) b.disabled = true; if(m){ m.textContent = '…'; m.className = 'wl-msg'; }
+      fetch('/api/waitlist', {method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify(data)})
+        .then(function(r){ return r.json().catch(function(){ return {code:'erreur'}; }); })
+        .then(function(j){ var c = (j && j.code) || 'erreur'; if(m){ m.textContent = MSG[c] || MSG.erreur; m.className = 'wl-msg ' + (c === 'ok' || c === 'deja' ? 'ok' : 'ko'); }
+          if(c === 'ok' || c === 'deja'){ f.classList.add('done'); } else if(b) b.disabled = false; })
+        .catch(function(){ if(m){ m.textContent = MSG.erreur; m.className = 'wl-msg ko'; } if(b) b.disabled = false; });
+    });
+  });
+  // page « merci » : le bon message selon le résultat
+  var r = /[?&]r=([a-z]+)/.exec(location.search), t = document.getElementById('mr-t'), p = document.getElementById('mr-p');
+  if(r && t && p && r[1] !== 'ok'){ t.textContent = r[1] === 'deja' || r[1] === 'stop' ? (r[1] === 'stop' ? 'C’est fait' : 'Déjà inscrit·e !') : 'Oups'; p.textContent = MSG[r[1]] || MSG.erreur; }
 } catch(err){} })();
