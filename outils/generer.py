@@ -22,6 +22,42 @@ APP_PRIV  = 'https://vezoria.pages.dev/privacy.html'
 CONTACT = 'contact@vezoria.fr'   # adresse gratuite : Cloudflare Email Routing → renvoyée vers ta boîte iCloud
 MAJ = '21 octobre 2026'
 TODAY  = datetime.date.today().isoformat()
+# 🔗 LIENS PARTENAIRES — pour l’instant de simples liens directs, bénévoles : aucun contrat, aucune commission.
+#    Le jour où un contrat d’affiliation est signé : remplacer l’adresse du partenaire ci-dessous par le lien
+#    d’affiliation, puis mettre AFFIL = True (ajoute rel="sponsored" et la mention « lien partenaire »).
+AFFIL = False
+from urllib.parse import quote
+PARTNERS = {
+    'gflights':    ('✈️', 'Google Flights', lambda c: 'https://www.google.com/travel/flights?hl=fr&q=' + quote('Vols vers ' + c)),
+    'booking':     ('🛏️', 'Booking.com',   lambda c: 'https://www.booking.com/searchresults.fr.html?ss=' + quote(c) if c else 'https://www.booking.com/index.fr.html'),
+    'gyg':         ('🎟️', 'GetYourGuide',  lambda c: 'https://www.getyourguide.fr/s/?q=' + quote(c) if c else 'https://www.getyourguide.fr/'),
+    'trainline':   ('🚆', 'Trainline',     lambda c: 'https://www.thetrainline.com/fr'),
+    'discovercars':('🚙', 'DiscoverCars',  lambda c: 'https://www.discovercars.com/'),
+    'airalo':      ('📶', 'Airalo',        lambda c: 'https://www.airalo.com/fr'),
+    'chapka':      ('🛡️', 'Chapka',        lambda c: 'https://www.chapkadirect.fr/'),
+    'safetywing':  ('🛡️', 'SafetyWing',    lambda c: 'https://safetywing.com/'),
+    'wise':        ('💳', 'Wise',          lambda c: 'https://wise.com/fr/'),
+}
+def bk_a(k, what, ctx=''):
+    ic, name, url = PARTNERS[k]
+    rel = 'sponsored noopener' if AFFIL else 'noopener'
+    return f'<a href="{E(url(ctx))}" target="_blank" rel="{rel}">{E(what)}</a>'
+# un seul lien, seulement dans les guides où il rend vraiment service
+GUIDE_BK = {
+    'voyager-hors-ligne':               ('airalo',      'une eSIM Airalo', 'pour avoir Internet dès l’atterrissage hors d’Europe'),
+    'depenses-voyage-plusieurs-devises':('wise',        'une carte Wise', 'pour payer en devise locale sans frais de change'),
+    'papiers-voyage-formalites':        ('chapka',      'Chapka', 'pour une assurance voyage hors Europe'),
+    'voyage-en-train-europe':           ('trainline',   'Trainline', 'pour comparer les billets de train en Europe'),
+    'road-trip-plusieurs-villes':       ('discovercars','DiscoverCars', 'pour comparer les locations de voiture'),
+}
+def bk_box(slug):
+    if slug not in GUIDE_BK: return ''
+    k, what, why = GUIDE_BK[slug]
+    return f'<p class="bk-l">🔗 Bon à savoir : {bk_a(k, what)} {E(why)}.</p>'
+def bk_dest(x):
+    nom, it = x[0], x[9]
+    city = it[0][0] if it else nom
+    return f'<p class="bk-l">🔗 Pour réserver : {bk_a("gflights", "les vols", city)} · {bk_a("booking", "un hébergement à " + city, city)} · {bk_a("gyg", "les visites", city)}</p>'
 ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = html.escape
 BY = {p['slug']: p for p in PAGES}
@@ -45,7 +81,7 @@ def head(title, desc, path, og_type='article', extra_ld=()):
 <meta name="theme-color" content="#2A1238">
 <link rel="icon" href="assets/img/icon-192.png"><link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="preload" href="assets/fonts/outfit-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=5">
+<link rel="stylesheet" href="assets/site.css?v=6">
 {ld}
 </head><body>'''
 
@@ -135,6 +171,7 @@ for p in DPAGES:
     x = DST.BY[p['slug']]
     body = ''.join(f'<section class="block"><h2>{E(h)}</h2>{t}</section>' + (cta('Préparer ce voyage à plusieurs') if i == 2 else '') for i, (h, t) in enumerate(p['sections']))
     body += f'<section class="block withph">{phone("idees", "Les idées de destinations dans Vezoria")}<div class="txt"><h2>Partir à plusieurs ?</h2><p>Programme jour par jour, réservations, comptes partagés, valise et souvenirs : prépare {E(x[0])} avec tes compagnons dans un seul carnet.</p><ul><li><a href="organiser-voyage-entre-amis">Organiser un voyage entre amis</a></li><li><a href="partager-depenses-voyage">Partager les dépenses</a></li><li><a href="checklist-valise-voyage">La checklist valise</a></li></ul></div></section>'
+    body += bk_dest(x)
     body += faq_html(p['faq'])
     links = ''.join(f'<a class="chip" href="{DST.mo_slug(m)}">Où partir en {DST.MOIS[m-1]}</a>' for m in sorted(p['best'])) + ''.join(f'<a class="chip" href="{DST.th_slug(t)}">{E(DST.THEMES[t][0])}</a>' for t in p['tags'] if t in DST.THEMES)
     body += f'<section class="block"><h2>Autres idées</h2><div class="cards">{"".join(card(BY[DST.dslug(y)]) for y in p["sim"])}</div><div class="chips">{links}</div></section>'
@@ -179,7 +216,7 @@ for p in PAGES:
     out = head(p['title'], p['desc'], p['slug'], 'article', lds) + topbar() + f'''
 <div class="hero"><div class="wrap"><nav class="crumbs"><a href="./">Vezoria</a> › <span>{E(p["cat"])}</span></nav>
 <h1>{E(p["h1"])}</h1><p class="lead">{E(p["lead"])}</p>{cta()}</div><div class="air"></div></div>
-<main class="wrap">{soon}{body}{faq_html(p["faq"]) if p.get("faq") else ""}
+<main class="wrap">{soon}{body}{bk_box(p["slug"])}{faq_html(p["faq"]) if p.get("faq") else ""}
 <section class="block"><h2>À lire aussi</h2><div class="cards">{rel}</div></section></main>''' + footer()
     write(p['slug'] + '.html', out)
 
@@ -260,7 +297,7 @@ write('confidentialite.html', legal_page('confidentialite', 'Politique de confid
 <li><b>Te désinscrire :</b> écris à <a href="mailto:{CONTACT}">{CONTACT}</a> ; ton adresse est supprimée. L’e-mail de lancement contiendra aussi un lien de désinscription.</li></ul></section>
 <section class="block"><h2>4. Le petit script du Site</h2><p>Un script affiche {"les boutons Retour, Menu et Haut de page, et envoie le formulaire « Me prévenir » sans recharger la page (et, après le lancement, le bon bouton d’installation selon ton téléphone)" if PRELAUNCH else "le bon bouton d’installation (iPhone ou Android) et les boutons Retour, Menu et Haut de page"}. Il ne lit ni n’enregistre rien d’autre.</p></section>
 <section class="block"><h2>5. L’hébergeur</h2><p>Comme tout hébergeur, Cloudflare (Cloudflare Pages) reçoit des données techniques au moment où une page est demandée (notamment l’adresse IP), pour acheminer la page et assurer la sécurité du service. Ces données sont traitées par Cloudflare selon sa propre politique de confidentialité ; l’éditeur n’y a pas accès. Cloudflare peut traiter des données hors de l’Union européenne, dans le cadre des clauses contractuelles types et du cadre de protection des données UE–États-Unis.</p></section>
-<section class="block"><h2>6. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria ou un site officiel, tu quittes le Site : la politique de confidentialité de ce site s’applique alors.</p></section>
+<section class="block"><h2>6. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria, un site officiel ou un site de réservation (vols, hébergement, activités, eSIM, assurance…), tu quittes le Site : la politique de confidentialité de ce site s’applique alors. {"" if not AFFIL else "Certains de ces liens sont des liens partenaires (affiliation) : ils permettent au site partenaire de savoir que tu viens de Vezoria ; l’éditeur peut percevoir une commission, sans surcoût pour toi. Le Site lui-même ne dépose aucun cookie."}</p></section>
 <section class="block"><h2>7. Tes droits</h2><p>Tu peux accéder à ton adresse, la faire corriger ou effacer, et retirer ton consentement : <a href="mailto:{CONTACT}">{CONTACT}</a>. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).</p></section>"""))
 
 # page « merci » (après le formulaire), non référencée
