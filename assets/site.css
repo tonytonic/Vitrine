@@ -110,3 +110,6 @@ main .cta small{text-align:center}
 .wl.done .wl-r,.wl.done select,.wl.done .wl-c{display:none}
 .hgrid>div{min-width:0}.cta.teaser,.wl{min-width:0;max-width:100%;box-sizing:border-box}.wl select{width:100%}.wl-r input{width:100%}
 @media (max-width:380px){.wl-r{flex-direction:column}}
+/* liens utiles : une ligne discrète, pas d’encart */
+.bk-l{margin:18px 0 0;font-size:.9rem;color:var(--gray)}
+.bk-l a{color:var(--navy2);font-weight:600}
