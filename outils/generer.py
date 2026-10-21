@@ -8,15 +8,19 @@ from pages import PAGES, FAQ_HOME
 import pages2  # noqa : ajoute les guides supplémentaires
 import destinations as DST
 
-SITE   = 'https://vezoria-site.pages.dev'          # ← l'adresse du site (sans / à la fin)
+SITE   = 'https://vezoria.fr'                       # ← l'adresse du site (sans / à la fin)
+# 🚀 AVANT LE LANCEMENT : boutons d'installation masqués, remplacés par l'annonce du lancement.
+#    Le jour J : mettre PRELAUNCH = False puis relancer  python3 outils/generer.py
+PRELAUNCH = True
+LAUNCH    = 'novembre 2026'
 APP    = 'https://vezoria.pages.dev/'                # l'appli (iPhone : à ajouter à l'écran d'accueil)
 PLAY   = 'https://play.google.com/store/apps/details?id=fr.vezoria.app'
 LEGAL  = 'mentions-legales'                          # pages du site (l’appli a les siennes)
 PRIV   = 'confidentialite'
 APP_LEGAL = 'https://vezoria.pages.dev/mentions-legales.html'
 APP_PRIV  = 'https://vezoria.pages.dev/privacy.html'
-CONTACT = 'appareils.treves6g@icloud.com'
-MAJ = '18 octobre 2026'
+CONTACT = 'contact@vezoria.fr'   # adresse gratuite : Cloudflare Email Routing → renvoyée vers ta boîte iCloud
+MAJ = '21 octobre 2026'
 TODAY  = datetime.date.today().isoformat()
 ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = html.escape
@@ -31,23 +35,42 @@ def head(title, desc, path, og_type='article', extra_ld=()):
 <meta charset="UTF-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <title>{E(title)}</title>
 <meta name="description" content="{E(desc)}">
+<meta name="robots" content="index,follow,max-image-preview:large,max-snippet:-1">
 <link rel="canonical" href="{url}">
+<link rel="alternate" hreflang="fr" href="{url}"><link rel="alternate" hreflang="x-default" href="{url}">
 <meta property="og:type" content="{og_type}"><meta property="og:site_name" content="Vezoria">
 <meta property="og:title" content="{E(title)}"><meta property="og:description" content="{E(desc)}">
-<meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}/assets/img/og.jpg"><meta property="og:locale" content="fr_FR">
-<meta name="twitter:card" content="summary_large_image">
+<meta property="og:url" content="{url}"><meta property="og:image" content="{SITE}/assets/img/og.jpg"><meta property="og:image:width" content="1200"><meta property="og:image:height" content="630"><meta property="og:image:alt" content="Vezoria, le carnet de voyage qu’on remplit à plusieurs"><meta property="og:locale" content="fr_FR">
+<meta name="twitter:card" content="summary_large_image"><meta name="twitter:title" content="{E(title)}"><meta name="twitter:description" content="{E(desc)}"><meta name="twitter:image" content="{SITE}/assets/img/og.jpg">
 <meta name="theme-color" content="#2A1238">
 <link rel="icon" href="assets/img/icon-192.png"><link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="preload" href="assets/fonts/outfit-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=3">
+<link rel="stylesheet" href="assets/site.css?v=5">
 {ld}
 </head><body>'''
 
 def topbar():
+    act = f'<a class="cta-mini tz-mini" href="./#lancement">🚀 {E(LAUNCH.split()[0].capitalize())}</a>' if PRELAUNCH else f'<a class="cta-mini" href="{PLAY}" data-store>Installer</a>'
     return f'''<header class="top"><a class="brand" href="./"><img src="assets/img/logo-vezoria.png" alt="" width="34" height="34"><span>Vezoria</span></a>
-<nav><a href="./#guides">Guides</a><a href="guide-utilisateur">Mode d’emploi</a><a class="cta-mini" href="{PLAY}" data-store>Installer</a></nav></header>'''
+<nav><a href="./#guides">Guides</a><a href="guide-utilisateur">Mode d’emploi</a>{act}</nav></header>'''
 
-def cta(label='Installer Vezoria gratuitement'):
+TZN = [0]
+def teaser(home=False, src='site'):
+    TZN[0] += 1; n = TZN[0]
+    return f'''<div class="cta teaser"{' id="lancement"' if home else ''}><div class="tz"><span class="tz-dot"></span><b>Lancement courant {E(LAUNCH)}</b></div>
+<p>Vezoria arrive très bientôt sur Android et iPhone. En attendant, prépare ton prochain voyage avec les guides.</p>
+<form class="wl" method="post" action="/api/waitlist" data-wl>
+<label class="wl-l" for="wl-e{n}">Sois prévenu·e le jour du lancement</label>
+<div class="wl-r"><input id="wl-e{n}" type="email" name="email" required maxlength="190" autocomplete="email" inputmode="email" placeholder="ton@email.fr"><button class="btn tz1" type="submit">Me prévenir</button></div>
+<select name="interest" aria-label="Tu voyages plutôt"><option value="">Tu voyages plutôt… (facultatif)</option><option value="amis">Entre amis</option><option value="famille">En famille</option><option value="couple">En couple</option><option value="solo">En solo</option><option value="groupe">En groupe / association</option></select>
+<label class="wl-c"><input type="checkbox" name="consent" value="1" required><span>J’accepte de recevoir un e-mail au lancement de Vezoria (et c’est tout). <a href="confidentialite#liste">En savoir plus</a></span></label>
+<input type="text" name="site" class="wl-hp" tabindex="-1" autocomplete="off" aria-hidden="true"><input type="hidden" name="source" value="{src}">
+<p class="wl-msg" role="status" aria-live="polite"></p></form>
+<div class="tz-b"><a class="btn tz2" href="./#guides">📚 Lire les guides</a><a class="btn tz2" href="destinations">🌍 Trouver une destination</a></div>
+<small>Gratuit · sans pub · sans compte · voyages chiffrés</small></div>'''
+
+def cta(label='Installer Vezoria gratuitement', home=False):
+    if PRELAUNCH: return teaser(home)
     return f'''<div class="cta"><a class="btn and" href="{PLAY}" rel="noopener">🤖 Android · Play Store</a><a class="btn ios" href="{APP}" rel="noopener">🍏 iPhone · ouvrir dans Safari</a>
 <small>{E(label)} · sans pub · sans compte</small></div>'''
 
@@ -56,7 +79,7 @@ def footer():
     dst = '<div><b>Destinations</b><a href="destinations">Toutes les destinations</a>' + ''.join(f'<a href="{DST.th_slug(t)}">{E(DST.THEMES[t][0])}</a>' for t in ['plage', 'ville', 'nature', 'romantique']) + ''.join(f'<a href="{DST.mo_slug(m)}">Où partir en {DST.MOIS[m-1]}</a>' for m in NEXT3) + '</div>'
     return f'''<footer class="foot"><div class="air"></div><div class="wrap"><div class="fcols">{dst}{cols}</div>
 <div class="fbot"><span>Vezoria · le carnet de voyage qu’on remplit à plusieurs</span><span><a href="guides">Tous les guides</a> · <a href="guide-utilisateur">Mode d’emploi</a> · <a href="{LEGAL}">Mentions légales</a> · <a href="{PRIV}">Confidentialité</a></span></div></div></footer>
-<script src="assets/site.js?v=3" defer></script></body></html>'''
+<script src="assets/site.js?v=5" defer></script></body></html>'''
 
 def slug_cat(c): return DST.slugify(c)
 ICON = {'Découvrir':'✨','Préparer':'🧭','Types de voyage':'🧳','Budget':'💸','Checklists':'✅','Partager':'👀','Voyager':'📍','Se souvenir':'📸','L’appli':'📱','Destinations':'🌍'}
@@ -81,7 +104,9 @@ def crumbs_ld(p):
 APP_LD = {'@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': 'Vezoria', 'operatingSystem': 'Android, iOS',
           'applicationCategory': 'TravelApplication', 'inLanguage': 'fr', 'url': SITE + '/',
           'description': 'Carnet de voyage partagé : programme jour par jour, réservations, budget partagé, checklist, souvenirs. Gratuit, sans publicité, sans compte.',
-          'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'downloadUrl': PLAY, 'image': SITE + '/assets/img/og.jpg'}
+          'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'image': SITE + '/assets/img/og.jpg', **({} if PRELAUNCH else {'downloadUrl': PLAY})}
+ORG_LD = {'@context': 'https://schema.org', '@type': 'Organization', 'name': 'Vezoria', 'url': SITE + '/', 'logo': SITE + '/assets/img/logo-vezoria.png', 'email': CONTACT}
+SITE_LD = {'@context': 'https://schema.org', '@type': 'WebSite', 'name': 'Vezoria', 'alternateName': 'Vezoria, carnet de voyage partagé', 'url': SITE + '/', 'inLanguage': 'fr'}
 
 def faq_html(faq):
     return '<section class="block"><h2>Questions fréquentes</h2>' + ''.join(f'<details class="q"><summary>{E(q)}</summary><p>{E(a)}</p></details>' for q, a in faq) + '</section>'
@@ -150,10 +175,11 @@ for p in PAGES:
         body += f'<section class="block{" withph" if fig else ""}{" alt" if (i // 2) % 2 else ""}">{fig}<div class="txt"><h2>{E(h2)}</h2>{txt}</div></section>'
         if i == 1: body += cta()
     rel = ''.join(card(BY[s]) for s in p.get('rel', []) if s in BY)
+    soon = f'<div class="tz-note">🚀 Vezoria sera disponible courant {E(LAUNCH)} : cette page t’explique comment l’installer dès le lancement.</div>' if PRELAUNCH and p['slug'].startswith('installer-') else ''
     out = head(p['title'], p['desc'], p['slug'], 'article', lds) + topbar() + f'''
 <div class="hero"><div class="wrap"><nav class="crumbs"><a href="./">Vezoria</a> › <span>{E(p["cat"])}</span></nav>
 <h1>{E(p["h1"])}</h1><p class="lead">{E(p["lead"])}</p>{cta()}</div><div class="air"></div></div>
-<main class="wrap">{body}{faq_html(p["faq"]) if p.get("faq") else ""}
+<main class="wrap">{soon}{body}{faq_html(p["faq"]) if p.get("faq") else ""}
 <section class="block"><h2>À lire aussi</h2><div class="cards">{rel}</div></section></main>''' + footer()
     write(p['slug'] + '.html', out)
 
@@ -169,9 +195,9 @@ feat = [('🗓️', 'Le programme jour par jour', 'Étapes, hôtels, trajets et 
         ('👀', 'La famille suit le voyage', 'Un simple lien, sans installer d’appli. Tu choisis ce qui est publié.'),
         ('🔒', 'Gratuit, sans pub, sans compte', 'Aucun pistage. Tes voyages partagés ne sont visibles que par tes invités.')]
 fhtml = ''.join(f'<div class="feat"><i>{a}</i><b>{E(b)}</b><span>{E(c)}</span></div>' for a, b, c in feat)
-home = head('Vezoria · carnet de voyage partagé, gratuit et sans pub', 'Vezoria : le carnet de voyage qu’on remplit à plusieurs. Programme jour par jour, réservations, budget partagé, checklist et souvenirs. Gratuit, sans pub, sans compte.', '', 'website', [APP_LD, faq_ld(FAQ_HOME)]) + topbar() + f'''
+home = head('Vezoria · carnet de voyage partagé, gratuit et sans pub', 'Vezoria : le carnet de voyage qu’on remplit à plusieurs. Programme jour par jour, réservations, budget partagé, checklist et souvenirs. Gratuit, sans pub, sans compte.', '', 'website', [APP_LD, ORG_LD, SITE_LD, faq_ld(FAQ_HOME)]) + topbar() + f'''
 <div class="hero home"><div class="wrap hgrid"><div><p class="kick">Carnet de voyage partagé</p><h1>Le carnet de voyage qu’on remplit <em>à plusieurs</em></h1>
-<p class="lead">Programme jour par jour, réservations, budget partagé, valise, souvenirs : tout le voyage dans une seule appli, pour tous ceux qui partent avec toi.</p>{cta()}</div>
+<p class="lead">Programme jour par jour, réservations, budget partagé, valise, souvenirs : tout le voyage dans une seule appli, pour tous ceux qui partent avec toi.</p>{cta(home=True)}</div>
 <div class="hph">{phone("mes-voyages", "La liste des voyages dans Vezoria")}{phone("accueil", "L’écran principal d’un voyage")}</div></div><div class="air"></div></div>
 <main class="wrap"><section class="block"><h2>Tout le voyage, au même endroit</h2><div class="feats">{fhtml}</div></section>
 <section class="block three"><div><span class="ph3">🧳</span><b>Avant</b><p>On prépare ensemble : étapes, hôtels, trajets, budget, valise.</p></div><div><span class="ph3">📍</span><b>Pendant</b><p>Les billets en un geste, les dépenses notées, la journée racontée.</p></div><div><span class="ph3">🗺️</span><b>Après</b><p>Les souvenirs, le bilan, le film et l’album du voyage.</p></div></section>
@@ -212,26 +238,39 @@ write('mentions-legales.html', legal_page('mentions-legales', 'Mentions légales
 <section class="block"><p>Conformément aux articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l’économie numérique (LCEN), voici les mentions légales du présent site d’information consacré à Vezoria (ci-après « le Site »). L’application Vezoria a ses propres <a href="{APP_LEGAL}" rel="noopener">mentions légales</a>.</p></section>
 <section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par un particulier, à titre personnel et non professionnel :</p><ul><li><b>Nom :</b> Anthony Chauvel</li><li><b>Qualité :</b> personne physique, éditeur non professionnel</li><li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul><p>Conformément à l’article 6-III-2 de la LCEN, l’éditeur non professionnel peut ne tenir à disposition du public que les éléments permettant de le contacter, son identité complète étant communiquée à l’hébergeur.</p></section>
 <section class="block"><h2>2. Directeur de la publication</h2><p>Anthony Chauvel.</p></section>
-<section class="block"><h2>3. Hébergement</h2><p>Le Site est hébergé par <b>GitHub Pages</b> : GitHub, Inc., 88 Colin P. Kelly Jr. Street, San Francisco, CA 94107, États-Unis (github.com).</p></section>
+<section class="block"><h2>3. Hébergement</h2><p>Le Site est hébergé par <b>Cloudflare Pages</b> : Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis (cloudflare.com). Le nom de domaine vezoria.fr est enregistré auprès d’OVH SAS, 2 rue Kellermann, 59100 Roubaix, France.</p></section>
 <section class="block"><h2>4. Objet du Site</h2><p>Le Site présente l’application gratuite Vezoria et propose des guides pratiques pour préparer un voyage à plusieurs. Il ne vend rien, ne contient aucune publicité et ne demande aucune inscription.</p></section>
 <section class="block"><h2>5. Informations indicatives</h2><p>Les informations des guides (périodes conseillées, températures moyennes, durées, budgets, formalités, règles de voyage) sont données <b>à titre indicatif</b>, comme ordres de grandeur et règles générales. Elles peuvent évoluer et ne remplacent pas les sources officielles (diplomatie.gouv.fr, service-public.fr, sites officiels des pays, des transporteurs et des prestataires), qu’il appartient à chacun de consulter avant de partir ou de réserver.</p></section>
 <section class="block"><h2>6. Responsabilité</h2><p>Le Site est fourni « en l’état ». L’éditeur ne saurait être tenu responsable d’une erreur ou d’une omission dans les informations publiées, d’une décision prise sur leur base, ni du contenu des sites externes vers lesquels le Site renvoie. Le Site est indépendant : il n’est ni affilié, ni partenaire, ni rémunéré par les sites mentionnés.</p></section>
 <section class="block"><h2>7. Propriété intellectuelle</h2><p>Les textes, captures d’écran de l’application, illustrations, le nom et le logo Vezoria sont la propriété de l’éditeur. Toute reproduction sans autorisation est interdite, sauf courte citation avec un lien vers le Site. Les captures montrent le voyage de démo de l’application : les personnes et les voyages y sont fictifs.</p></section>
-<section class="block"><h2>8. Données personnelles</h2><p>Le Site ne dépose aucun cookie et ne collecte aucune donnée personnelle : voir la <a href="confidentialite">politique de confidentialité</a>.</p></section>
+<section class="block"><h2>8. Données personnelles</h2><p>Le Site ne dépose aucun cookie. La seule donnée personnelle collectée est l’adresse e-mail que tu choisis de laisser pour être prévenu·e du lancement : voir la <a href="confidentialite">politique de confidentialité</a>.</p></section>
 <section class="block"><h2>9. Droit applicable</h2><p>Les présentes mentions sont soumises au droit français.</p></section>"""))
 
-write('confidentialite.html', legal_page('confidentialite', 'Politique de confidentialité du site Vezoria', 'Le site Vezoria ne dépose aucun cookie, n’utilise aucun outil de mesure d’audience et ne collecte aucune donnée personnelle.', 'Politique de confidentialité', f"""
+write('confidentialite.html', legal_page('confidentialite', 'Politique de confidentialité du site Vezoria', 'Le site Vezoria ne dépose aucun cookie et n’utilise aucune mesure d’audience. Seule l’adresse e-mail laissée pour être prévenu du lancement est conservée.', 'Politique de confidentialité', f"""
 <section class="block"><p>Cette politique concerne le présent site d’information. L’application Vezoria a sa propre <a href="{APP_PRIV}" rel="noopener">politique de confidentialité</a>.</p>
-<div class="feats"><div class="feat"><i>🍪</i><b>Aucun cookie</b><span>Ni cookie, ni traceur, ni stockage dans ton navigateur.</span></div><div class="feat"><i>📊</i><b>Aucune statistique</b><span>Pas de mesure d’audience, pas de Google Analytics.</span></div><div class="feat"><i>📢</i><b>Aucune publicité</b><span>Aucune régie, aucun réseau social intégré.</span></div><div class="feat"><i>📝</i><b>Aucun formulaire</b><span>Rien à remplir, aucun compte.</span></div></div></section>
+<div class="feats"><div class="feat"><i>🍪</i><b>Aucun cookie</b><span>Ni cookie, ni traceur, ni stockage dans ton navigateur.</span></div><div class="feat"><i>📊</i><b>Aucune statistique</b><span>Pas de mesure d’audience, pas de Google Analytics.</span></div><div class="feat"><i>📢</i><b>Aucune publicité</b><span>Aucune régie, aucun réseau social intégré.</span></div><div class="feat"><i>✉️</i><b>Un seul formulaire, facultatif</b><span>Ton e-mail, seulement si tu veux être prévenu·e du lancement.</span></div></div></section>
 <section class="block"><h2>1. Responsable</h2><p>Anthony Chauvel, éditeur non professionnel — <a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
-<section class="block"><h2>2. Ce que le Site ne fait pas</h2><ul><li>Il ne dépose <b>aucun cookie</b> et n’utilise <b>aucun stockage</b> dans ton navigateur.</li><li>Il n’utilise <b>aucun outil de mesure d’audience</b> ni de publicité.</li><li>Il ne charge <b>aucun service extérieur</b> : polices, images et scripts sont hébergés sur le Site lui-même.</li><li>Il ne contient <b>aucun formulaire</b> et ne demande aucune information.</li></ul></section>
-<section class="block"><h2>3. Le petit script du Site</h2><p>Un script affiche le bon bouton d’installation (iPhone ou Android) et les boutons Retour, Menu et Haut de page. Pour savoir quel téléphone tu utilises, il lit le type de navigateur <b>directement dans ton navigateur</b> : rien n’est envoyé ni enregistré.</p></section>
-<section class="block"><h2>4. L’hébergeur</h2><p>Comme tout hébergeur, GitHub (GitHub Pages) reçoit des données techniques au moment où une page est demandée (notamment l’adresse IP), pour acheminer la page et assurer la sécurité du service. Ces données sont traitées par GitHub selon sa propre déclaration de confidentialité ; l’éditeur n’y a pas accès.</p></section>
-<section class="block"><h2>5. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria ou un site officiel, tu quittes le Site : la politique de confidentialité de ce site s’applique alors.</p></section>
-<section class="block"><h2>6. Tes droits</h2><p>Le Site ne conservant aucune donnée personnelle, il n’y a rien à consulter, rectifier ou effacer. Pour toute question : <a href="mailto:{CONTACT}">{CONTACT}</a>. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).</p></section>"""))
+<section class="block"><h2>2. Ce que le Site ne fait pas</h2><ul><li>Il ne dépose <b>aucun cookie</b> et n’utilise <b>aucun stockage</b> dans ton navigateur.</li><li>Il n’utilise <b>aucun outil de mesure d’audience</b> ni de publicité.</li><li>Il ne charge <b>aucun service extérieur</b> : polices, images et scripts sont hébergés sur le Site lui-même.</li></ul></section>
+<section class="block" id="liste"><h2>3. La liste « Me prévenir du lancement »</h2>
+<ul><li><b>Ce qui est enregistré :</b> ton adresse e-mail, la date d’inscription, la page depuis laquelle tu t’es inscrit·e et, si tu le choisis, ta façon de voyager (entre amis, en famille…). Une empreinte chiffrée et non réversible de ton adresse IP sert seulement à bloquer les inscriptions en rafale (anti-robots) : elle est effacée automatiquement une heure après ton inscription (au prochain passage du Site) et ne permet pas de te retrouver.</li>
+<li><b>Pourquoi :</b> t’envoyer <b>un seul e-mail</b> pour t’annoncer le lancement de Vezoria. Aucune lettre d’information, aucune revente, aucun partage.</li>
+<li><b>Sur quelle base :</b> ton consentement (case à cocher), que tu peux retirer à tout moment.</li>
+<li><b>Combien de temps :</b> jusqu’à l’envoi de l’e-mail de lancement, puis la liste est effacée, et au plus tard le 31 mars 2027.</li>
+<li><b>Où :</b> dans une base de données Cloudflare D1 rattachée au Site, accessible uniquement par l’éditeur.</li>
+<li><b>Te désinscrire :</b> écris à <a href="mailto:{CONTACT}">{CONTACT}</a> ; ton adresse est supprimée. L’e-mail de lancement contiendra aussi un lien de désinscription.</li></ul></section>
+<section class="block"><h2>4. Le petit script du Site</h2><p>Un script affiche {"les boutons Retour, Menu et Haut de page, et envoie le formulaire « Me prévenir » sans recharger la page (et, après le lancement, le bon bouton d’installation selon ton téléphone)" if PRELAUNCH else "le bon bouton d’installation (iPhone ou Android) et les boutons Retour, Menu et Haut de page"}. Il ne lit ni n’enregistre rien d’autre.</p></section>
+<section class="block"><h2>5. L’hébergeur</h2><p>Comme tout hébergeur, Cloudflare (Cloudflare Pages) reçoit des données techniques au moment où une page est demandée (notamment l’adresse IP), pour acheminer la page et assurer la sécurité du service. Ces données sont traitées par Cloudflare selon sa propre politique de confidentialité ; l’éditeur n’y a pas accès. Cloudflare peut traiter des données hors de l’Union européenne, dans le cadre des clauses contractuelles types et du cadre de protection des données UE–États-Unis.</p></section>
+<section class="block"><h2>6. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria ou un site officiel, tu quittes le Site : la politique de confidentialité de ce site s’applique alors.</p></section>
+<section class="block"><h2>7. Tes droits</h2><p>Tu peux accéder à ton adresse, la faire corriger ou effacer, et retirer ton consentement : <a href="mailto:{CONTACT}">{CONTACT}</a>. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).</p></section>"""))
+
+# page « merci » (après le formulaire), non référencée
+write('merci.html', head('Merci · Vezoria', 'Inscription à l’annonce du lancement de Vezoria.', 'merci', 'website').replace('index,follow,max-image-preview:large,max-snippet:-1', 'noindex,follow') + topbar() + f"""
+<div class="hero"><div class="wrap"><h1 id="mr-t">Merci !</h1><p class="lead" id="mr-p">C’est noté : tu recevras un seul e-mail, le jour du lancement de Vezoria (courant {E(LAUNCH)}).</p>
+<div class="tz-b" style="justify-content:flex-start"><a class="btn tz1" href="./#guides">📚 Lire les guides</a><a class="btn tz2" href="destinations">🌍 Trouver une destination</a></div></div><div class="air"></div></div>
+<main class="wrap"><section class="block"><div class="cards">""" + ''.join(card(p) for p in PAGES[:6]) + '</div></section></main>' + footer())
 
 # ── sitemap, robots ──
 urls = [('', '1.0', 'weekly'), ('guides', '0.9', 'weekly'), ('destinations', '0.9', 'weekly'), ('guide-utilisateur', '0.8', 'monthly')] + [(p['slug'], '0.8', 'monthly') for p in PAGES] + [(p['slug'], '0.7', 'monthly') for p in DPAGES + MPAGES + TPAGES + [PLUGP]] + [('mentions-legales', '0.2', 'yearly'), ('confidentialite', '0.2', 'yearly')]
 write('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod><changefreq>{f}</changefreq><priority>{pr}</priority></url>\n' for u, pr, f in urls) + '</urlset>\n')
-write('robots.txt', f'User-agent: *\nAllow: /\n\nSitemap: {SITE}/sitemap.xml\n')
+write('robots.txt', f'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /merci\n\nSitemap: {SITE}/sitemap.xml\n')
 print(len(urls) + 1, 'pages générées')
