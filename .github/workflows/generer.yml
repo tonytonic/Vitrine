@@ -1,0 +1,25 @@
+# Dès qu'un fichier de outils/ change (par exemple une destination ajoutée dans dests.json depuis l'iPhone),
+# toutes les pages du site sont régénérées et enregistrées : Cloudflare Pages publie tout seul.
+name: Régénérer le site
+on:
+  push:
+    paths:
+      - 'outils/**'
+  workflow_dispatch:
+permissions:
+  contents: write
+jobs:
+  generer:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 outils/generer.py
+      - run: |
+          git config user.name "vezoria-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Pages régénérées"
+          git push
