@@ -1,0 +1,29 @@
+# Onglet Actions → « Climat des destinations » → Run workflow
+# Met à jour les températures (et, si coché, les meilleurs mois) de outils/dests.json avec NASA POWER,
+# régénère toutes les pages du site, puis enregistre le tout : Cloudflare Pages publie tout seul.
+name: Climat des destinations
+on:
+  workflow_dispatch:
+    inputs:
+      mois:
+        description: 'Recalculer aussi les meilleurs mois'
+        type: boolean
+        default: false
+permissions:
+  contents: write
+jobs:
+  climat:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - run: python3 outils/climat.py ${{ inputs.mois && '--mois' || '' }}
+      - run: python3 outils/generer.py
+      - run: |
+          git config user.name "vezoria-bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add -A
+          git diff --cached --quiet || git commit -m "Climat des destinations (NASA POWER) et pages régénérées"
+          git push
