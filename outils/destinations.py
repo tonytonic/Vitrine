@@ -13,12 +13,12 @@ VISA = {'UE':'Carte d’identité ou passeport en cours de validité suffisent p
         'E':'Passeport et autorisation de voyage électronique à demander en ligne avant le départ (par exemple ESTA, ETA…).',
         'V':'Passeport et visa (souvent en ligne ou à l’arrivée).'}
 EU_CEAM = set('AT BE BG CH CY CZ DE DK EE ES FI FR GR HR HU IE IS IT LI LT LU LV MT NL NO PL PT RO SE SI SK'.split())
-FRT = {'FR', 'RE', 'GP'}
-PLUG = {'GB':'G','IE':'G','MT':'G','CY':'G','HK':'G','SG':'G','MY':'G','AE':'G','QA':'G','KE':'G','US':'A/B','CA':'A/B','MX':'A/B','JP':'A/B','CO':'A/B','CU':'A/B','DO':'A/B','PH':'A/B','TW':'A/B',
+FRT = {'FR', 'RE', 'GP', 'MQ', 'PF', 'NC'}
+PLUG = {'OM':'G','TZ':'D/G','NA':'D/M','ZW':'D/G','GT':'A/B','PA':'A/B','BO':'A/C','CL':'L','KH':'A/C/G','LA':'A/B','PF':'A/B','DO':'A/B','GB':'G','IE':'G','MT':'G','CY':'G','HK':'G','SG':'G','MY':'G','AE':'G','QA':'G','KE':'G','US':'A/B','CA':'A/B','MX':'A/B','JP':'A/B','CO':'A/B','CU':'A/B','DO':'A/B','PH':'A/B','TW':'A/B',
         'AU':'I','NZ':'I','CN':'I/A','AR':'I','FJ':'I','CH':'J','LI':'J','IT':'L','BR':'N','IN':'D/M','ZA':'M/N','IL':'H','TH':'A/B/O','LK':'D/G','NP':'D','MV':'G','MU':'G','SC':'G','JM':'A/B','CR':'A/B','PE':'A/C','EC':'A/B','VN':'A/C','ID':'C/F'}
-PAYS = {'GB':'Royaume-Uni','IE':'Irlande','MT':'Malte','CY':'Chypre','HK':'Hong Kong','SG':'Singapour','MY':'Malaisie','AE':'Émirats arabes unis','QA':'Qatar','KE':'Kenya','US':'États-Unis','CA':'Canada','MX':'Mexique','JP':'Japon','CO':'Colombie','CU':'Cuba','DO':'République dominicaine','PH':'Philippines','TW':'Taïwan',
+PAYS = {'OM':'Oman','TZ':'Tanzanie','NA':'Namibie','ZW':'Zimbabwe','GT':'Guatemala','PA':'Panama','BO':'Bolivie','CL':'Chili','KH':'Cambodge','LA':'Laos','PF':'Polynésie française','GB':'Royaume-Uni','IE':'Irlande','MT':'Malte','CY':'Chypre','HK':'Hong Kong','SG':'Singapour','MY':'Malaisie','AE':'Émirats arabes unis','QA':'Qatar','KE':'Kenya','US':'États-Unis','CA':'Canada','MX':'Mexique','JP':'Japon','CO':'Colombie','CU':'Cuba','DO':'République dominicaine','PH':'Philippines','TW':'Taïwan',
         'AU':'Australie','NZ':'Nouvelle-Zélande','CN':'Chine','AR':'Argentine','FJ':'Fidji','CH':'Suisse','LI':'Liechtenstein','IT':'Italie','BR':'Brésil','IN':'Inde','ZA':'Afrique du Sud','IL':'Israël','TH':'Thaïlande','LK':'Sri Lanka','NP':'Népal','MV':'Maldives','MU':'Maurice','SC':'Seychelles','JM':'Jamaïque','CR':'Costa Rica','PE':'Pérou','EC':'Équateur','VN':'Vietnam','ID':'Indonésie'}
-REGION = {'Europe du Sud':'PT ES IT GR MT HR SI','France':'FR','Europe du Nord et de l’Ouest':'GB IE NL DE CZ AT HU IS NO FI','Méditerranée orientale et Afrique du Nord':'TR MA EG JO','Amériques':'US CA MX CR','Asie':'JP TH VN ID LK','Îles lointaines':'RE GP CV'}
+REGION = {'Europe du Sud':'PT ES IT GR MT HR SI CY','France':'FR','Europe du Nord et de l’Ouest':'GB IE NL BE DE CZ AT HU IS NO FI DK SE LV CH','Europe centrale et Balkans':'PL RO BG ME AL BA MK RS','Méditerranée orientale, Moyen-Orient et Afrique du Nord':'TR MA EG JO TN OM AE GE AM','Afrique':'TZ KE ZA NA MG SN ZW','Amériques':'US CA MX CR CU DO GT PA PE BO CL AR BR CO EC','Asie':'JP TH VN ID LK UZ IN NP PH MY SG KH LA KR TW CN HK MN','Océanie':'AU NZ','Îles lointaines':'RE GP MQ PF NC CV MV MU SC'}
 REG = {cc: r for r, ccs in REGION.items() for cc in ccs.split()}
 THEMES = {'plage':('Destinations plage', 'Sable, mer et soleil : les destinations où la plage est au cœur du voyage.'),
           'ville':('City trips', 'Les grandes villes à découvrir le temps d’un week-end ou de quelques jours.'),
@@ -47,7 +47,8 @@ def months_txt(ms):
         if m == cur[-1] + 1: cur.append(m)
         else: runs.append(cur); cur = [m]
     runs.append(cur)
-    parts = [MOIS[r[0]-1] if len(r) == 1 else (MOIS[r[0]-1] + ' et ' + MOIS[r[-1]-1] if len(r) == 2 else 'de ' + MOIS[r[0]-1] + ' à ' + MOIS[r[-1]-1]) for r in runs]
+    if len(runs) > 1 and runs[0][0] == 1 and runs[-1][-1] == 12: runs = [runs[-1] + runs[0]] + runs[1:-1]   # « de novembre à mars » passe le cap de l’année
+    parts = [MOIS[r[0]-1] if len(r) == 1 else (MOIS[r[0]-1] + '-' + MOIS[r[-1]-1] if len(r) == 2 else 'de ' + MOIS[r[0]-1] + ' à ' + MOIS[r[-1]-1]) for r in runs]
     return parts[0] if len(parts) == 1 else ', '.join(parts[:-1]) + ' et ' + parts[-1]
 def plug(cc):
     if cc in PLUG: return f'Type {PLUG[cc]} : un adaptateur est nécessaire avec des appareils français.'
