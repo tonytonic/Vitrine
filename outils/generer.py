@@ -19,7 +19,7 @@ LEGAL  = 'mentions-legales'                          # pages du site (l’appli 
 PRIV   = 'confidentialite'
 APP_LEGAL = 'https://vezoria.pages.dev/mentions-legales.html'
 APP_PRIV  = 'https://vezoria.pages.dev/privacy.html'
-CONTACT = 'contact@vezoria.fr'   # adresse gratuite : Cloudflare Email Routing → renvoyée vers ta boîte iCloud
+CONTACT = 'contact.vezoria@icloud.com'   # adresse de contact (boîte iCloud)
 MAJ = '21 octobre 2026'
 TODAY  = datetime.date.today().isoformat()
 # 🔗 LIENS PARTENAIRES — pour l’instant de simples liens directs, bénévoles : aucun contrat, aucune commission.
