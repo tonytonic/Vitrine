@@ -39,7 +39,7 @@ Le jour du lancement : `PRELAUNCH = False`, puis `python3 outils/generer.py` : t
 ## Liste « Me prévenir du lancement » et contact
 - Formulaire sur toutes les pages (avant le lancement) → `functions/api/waitlist.js` (Cloudflare Pages Function) → base Cloudflare D1 liée sous le nom `DB`.
 - Export CSV des inscrits : `https://vezoria.fr/api/waitlist-export?key=ADMIN_KEY` (secret `ADMIN_KEY` dans les réglages du projet Pages).
-- Adresse de contact : `contact@vezoria.fr` (Cloudflare Email Routing).
+- Adresse de contact : `contact.vezoria@icloud.com`.
 - Marche à suivre complète : fichier `MARCHE-A-SUIVRE.html` livré à part (pas dans le dépôt).
 
 

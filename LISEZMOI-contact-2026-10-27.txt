@@ -1,0 +1,17 @@
+SITE VITRINE (vezoria.fr) — nouvelle adresse de contact — 27/10/2026
+
+contact@vezoria.fr → contact.vezoria@icloud.com
+
+À POUSSER dans le dépôt Vitrine (5 fichiers, en gardant les dossiers) :
+  outils/generer.py          (l'adresse est définie ici, ligne CONTACT)
+  index.html                 (fiche Google « Organisation »)
+  mentions-legales.html
+  confidentialite.html       (contact, désinscription de la liste, tes droits)
+  README.md
+
+Comme outils/generer.py change, le robot GitHub « Régénérer le site » relance la création de toutes les
+pages juste après ton envoi : c'est normal (dates du plan du site mises à jour, etc.). Il remet la même
+adresse que celle de ces fichiers.
+
+Si tu as un renvoi Cloudflare Email Routing pour contact@vezoria.fr, garde-le quelques mois vers ta boîte
+iCloud : les personnes qui ont noté l'ancienne adresse pourront encore t'écrire.
