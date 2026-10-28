@@ -132,7 +132,9 @@ def footer():
 
 ON_DRIVE = bool(AFFIL and DRIVE)
 CK_LINK  = f' · <a href="{PRIV}#cookies" data-ck>Cookies</a>' if ON_DRIVE else ''
-DRIVE_JS = f'\n<script src="assets/drive.js?v=1" data-tp="{E(DRIVE)}" defer></script>' if ON_DRIVE else ''
+# Avant AFFIL = True, drive.js est quand même présent mais ne fait RIEN, sauf sur le téléphone de l'éditeur
+# passé une fois par https://vezoria.fr/?drive=test (mode test ; ?drive=off pour l'arrêter).
+DRIVE_JS = f'\n<script src="assets/drive.js?v=2" data-tp="{E(DRIVE)}" data-on="{1 if ON_DRIVE else 0}" defer></script>' if DRIVE else ''
 
 def slug_cat(c): return DST.slugify(c)
 ICON = {'Découvrir':'✨','Préparer':'🧭','Types de voyage':'🧳','Budget':'💸','Checklists':'✅','Partager':'👀','Voyager':'📍','Se souvenir':'📸','L’appli':'📱','Destinations':'🌍'}
@@ -348,7 +350,7 @@ write('merci.html', head('Merci · Vezoria', 'Inscription à l’annonce du lanc
 urls = [('', '1.0', 'weekly'), ('guides', '0.9', 'weekly'), ('destinations', '0.9', 'weekly'), ('guide-utilisateur', '0.8', 'monthly')] + [(p['slug'], '0.8', 'monthly') for p in PAGES] + [(p['slug'], '0.7', 'monthly') for p in DPAGES + MPAGES + TPAGES + [PLUGP]] + [('mentions-legales', '0.2', 'yearly'), ('confidentialite', '0.2', 'yearly')]
 write('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod><changefreq>{f}</changefreq><priority>{pr}</priority></url>\n' for u, pr, f in urls) + '</urlset>\n')
 CSP = ("default-src 'self'; script-src 'self' https:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https:; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
-       if ON_DRIVE else "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests")
+       if DRIVE else "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests")
 write('_headers', f'''/*
   X-Content-Type-Options: nosniff
   X-Frame-Options: SAMEORIGIN
