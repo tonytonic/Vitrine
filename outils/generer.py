@@ -39,12 +39,16 @@ TEL     = ''              # ⚠️ OBLIGATOIRE pour un pro : numéro de téléph
 MAJ = '1er novembre 2026' if AFFIL else '21 octobre 2026'
 if AFFIL and not (ADRESSE and TEL): print('⚠️  AFFIL = True : remplis ADRESSE et TEL dans outils/generer.py (mentions légales)')
 from urllib.parse import quote
+# Marques choisies parmi les programmes DÉJÀ DISPONIBLES pour le projet Vezoria chez Travelpayouts (Drive ne convertit
+# que celles-là) : Kiwi.com, Tiqets, Economybookings, Airalo, AirHelp. Booking.com reste en attente d'acceptation
+# (programme « à débloquer ») : son lien est converti automatiquement le jour où il est accepté.
 PARTNERS = {
-    'gflights':    ('✈️', 'Google Flights', lambda c: 'https://www.google.com/travel/flights?hl=fr&q=' + quote('Vols vers ' + c)),
+    'kiwi':        ('✈️', 'Kiwi.com',      lambda c: 'https://www.kiwi.com/fr/'),
     'booking':     ('🛏️', 'Booking.com',   lambda c: 'https://www.booking.com/searchresults.fr.html?ss=' + quote(c) if c else 'https://www.booking.com/index.fr.html'),
-    'gyg':         ('🎟️', 'GetYourGuide',  lambda c: 'https://www.getyourguide.fr/s/?q=' + quote(c) if c else 'https://www.getyourguide.fr/'),
+    'tiqets':      ('🎟️', 'Tiqets',        lambda c: 'https://www.tiqets.com/fr/'),
     'trainline':   ('🚆', 'Trainline',     lambda c: 'https://www.thetrainline.com/fr'),
-    'discovercars':('🚙', 'DiscoverCars',  lambda c: 'https://www.discovercars.com/'),
+    'economy':     ('🚙', 'Economybookings', lambda c: 'https://www.economybookings.com/'),
+    'airhelp':     ('🧾', 'AirHelp',       lambda c: 'https://www.airhelp.com/fr/'),
     'airalo':      ('📶', 'Airalo',        lambda c: 'https://www.airalo.com/fr'),
     'chapka':      ('🛡️', 'Chapka',        lambda c: 'https://www.chapkadirect.fr/'),
     'safetywing':  ('🛡️', 'SafetyWing',    lambda c: 'https://safetywing.com/'),
@@ -60,7 +64,8 @@ GUIDE_BK = {
     'depenses-voyage-plusieurs-devises':('wise',        'une carte Wise', 'pour payer en devise locale sans frais de change'),
     'papiers-voyage-formalites':        ('chapka',      'Chapka', 'pour une assurance voyage hors Europe'),
     'voyage-en-train-europe':           ('trainline',   'Trainline', 'pour comparer les billets de train en Europe'),
-    'road-trip-plusieurs-villes':       ('discovercars','DiscoverCars', 'pour comparer les locations de voiture'),
+    'road-trip-plusieurs-villes':       ('economy',     'Economybookings', 'pour comparer les locations de voiture'),
+    'retard-annulation-vol-droits':     ('airhelp',     'AirHelp', 'pour faire valoir tes droits sans avancer de frais si tu ne veux pas t’en occuper toi-même'),
 }
 BK_NOTE = ' <small>(liens partenaires)</small>' if AFFIL else ''
 def bk_box(slug):
@@ -70,7 +75,7 @@ def bk_box(slug):
 def bk_dest(x):
     nom, it = x[0], x[9]
     city = it[0][0] if it else nom
-    return f'<p class="bk-l">🔗 Pour réserver : {bk_a("gflights", "les vols", city)} · {bk_a("booking", "un hébergement à " + city, city)} · {bk_a("gyg", "les visites", city)}{BK_NOTE}</p>'
+    return f'<p class="bk-l">🔗 Pour réserver : {bk_a("kiwi", "les vols (Kiwi.com)", city)} · {bk_a("booking", "un hébergement à " + city, city)} · {bk_a("tiqets", "musées et visites (Tiqets)", city)}{BK_NOTE}</p>'
 ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = html.escape
 BY = {p['slug']: p for p in PAGES}
