@@ -29,7 +29,7 @@ TODAY  = datetime.date.today().isoformat()
 #      · les mentions légales et la confidentialité version micro-entreprise (éditeur pro, commissions).
 #    Aucun script extérieur, aucun cookie sur vezoria.fr : le suivi ne commence qu’une fois le visiteur parti
 #    chez Travelpayouts puis chez le partenaire (pas de bandeau cookies nécessaire sur le site).
-AFFIL = False
+AFFIL = TODAY >= '2026-11-01'   # s'allume tout seul le 1er novembre 2026 (le robot régénère le site ce jour-là) ; False pour tout couper
 # Liens Travelpayouts générés pour le projet « Vezoria » (site, 592113). Utilisés seulement quand AFFIL = True ;
 # sinon le site garde les liens directs. Vide = lien direct même avec AFFIL = True.
 TP_LINK = {
@@ -52,8 +52,8 @@ TP_LINK = {
 # 🏢 L’ÉDITEUR PROFESSIONNEL, affiché quand AFFIL = True (la loi LCEN demande ces informations à un pro)
 ENTREPRISE = 'CELMAR APPS'
 SIRET   = ''              # vide = « en cours d’attribution » ; à remplir dès réception
-ADRESSE = ''              # ⚠️ OBLIGATOIRE pour un pro : adresse postale (ou adresse de domiciliation)
-TEL     = ''              # ⚠️ OBLIGATOIRE pour un pro : numéro de téléphone
+ADRESSE = '13 rue du 19 Mars 1962, 29570 Camaret-sur-Mer, France'   # ⚠️ OBLIGATOIRE pour un pro : adresse postale (ou adresse de domiciliation)
+TEL     = '06 33 01 40 75'   # ⚠️ OBLIGATOIRE pour un pro : numéro de téléphone
 MAJ = '1er novembre 2026' if AFFIL else '21 octobre 2026'
 if AFFIL and not (ADRESSE and TEL): print('⚠️  AFFIL = True : remplis ADRESSE et TEL dans outils/generer.py (mentions légales)')
 from urllib.parse import quote
