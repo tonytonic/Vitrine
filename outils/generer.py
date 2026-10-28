@@ -20,12 +20,24 @@ PRIV   = 'confidentialite'
 APP_LEGAL = 'https://vezoria.pages.dev/mentions-legales.html'
 APP_PRIV  = 'https://vezoria.pages.dev/privacy.html'
 CONTACT = 'contact.vezoria@icloud.com'   # adresse de contact (boîte iCloud)
-MAJ = '21 octobre 2026'
 TODAY  = datetime.date.today().isoformat()
-# 🔗 LIENS PARTENAIRES — pour l’instant de simples liens directs, bénévoles : aucun contrat, aucune commission.
-#    Le jour où un contrat d’affiliation est signé : remplacer l’adresse du partenaire ci-dessous par le lien
-#    d’affiliation, puis mettre AFFIL = True (ajoute rel="sponsored" et la mention « lien partenaire »).
+# 🔗 LIENS PARTENAIRES — pour l’instant de simples liens directs : aucune commission.
+#    🗓️ LE 1er NOVEMBRE 2026 (début de la micro-entreprise) : mettre AFFIL = True, directement sur GitHub.
+#    Le robot régénère tout le site. AFFIL = True allume d’un coup :
+#      · Drive (Travelpayouts), qui transforme les liens de réservation en liens partenaires,
+#        mais SEULEMENT après l’accord du visiteur (bandeau « Accepter / Refuser » les cookies) ;
+#      · la mention « liens partenaires », rel="sponsored", et un lien « Cookies » en bas de page ;
+#      · les mentions légales et la confidentialité version micro-entreprise (éditeur pro, cookies, commissions) ;
+#      · l’autorisation du script Travelpayouts dans la sécurité du site (fichier _headers).
 AFFIL = False
+DRIVE = '592113'          # numéro du projet « Vezoria » (site) chez Travelpayouts ; '' = ne jamais charger Drive
+# 🏢 L’ÉDITEUR PROFESSIONNEL, affiché quand AFFIL = True (la loi LCEN demande ces informations à un pro)
+ENTREPRISE = 'CELMAR APPS'
+SIRET   = ''              # vide = « en cours d’attribution » ; à remplir dès réception
+ADRESSE = ''              # ⚠️ OBLIGATOIRE pour un pro : adresse postale (ou adresse de domiciliation)
+TEL     = ''              # ⚠️ OBLIGATOIRE pour un pro : numéro de téléphone
+MAJ = '1er novembre 2026' if AFFIL else '21 octobre 2026'
+if AFFIL and not (ADRESSE and TEL): print('⚠️  AFFIL = True : remplis ADRESSE et TEL dans outils/generer.py (mentions légales)')
 from urllib.parse import quote
 PARTNERS = {
     'gflights':    ('✈️', 'Google Flights', lambda c: 'https://www.google.com/travel/flights?hl=fr&q=' + quote('Vols vers ' + c)),
@@ -50,14 +62,15 @@ GUIDE_BK = {
     'voyage-en-train-europe':           ('trainline',   'Trainline', 'pour comparer les billets de train en Europe'),
     'road-trip-plusieurs-villes':       ('discovercars','DiscoverCars', 'pour comparer les locations de voiture'),
 }
+BK_NOTE = ' <small>(liens partenaires)</small>' if AFFIL else ''
 def bk_box(slug):
     if slug not in GUIDE_BK: return ''
     k, what, why = GUIDE_BK[slug]
-    return f'<p class="bk-l">🔗 Bon à savoir : {bk_a(k, what)} {E(why)}.</p>'
+    return f'<p class="bk-l">🔗 Bon à savoir : {bk_a(k, what)} {E(why)}.{BK_NOTE}</p>'
 def bk_dest(x):
     nom, it = x[0], x[9]
     city = it[0][0] if it else nom
-    return f'<p class="bk-l">🔗 Pour réserver : {bk_a("gflights", "les vols", city)} · {bk_a("booking", "un hébergement à " + city, city)} · {bk_a("gyg", "les visites", city)}</p>'
+    return f'<p class="bk-l">🔗 Pour réserver : {bk_a("gflights", "les vols", city)} · {bk_a("booking", "un hébergement à " + city, city)} · {bk_a("gyg", "les visites", city)}{BK_NOTE}</p>'
 ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = html.escape
 BY = {p['slug']: p for p in PAGES}
@@ -81,7 +94,7 @@ def head(title, desc, path, og_type='article', extra_ld=()):
 <meta name="theme-color" content="#2A1238">
 <link rel="icon" href="assets/img/icon-192.png"><link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="preload" href="assets/fonts/outfit-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=6">
+<link rel="stylesheet" href="assets/site.css?v=7">
 {ld}
 </head><body>'''
 
@@ -114,8 +127,12 @@ def footer():
     cols = ''.join(f'<div><b>{E(c)}</b>' + ''.join(f'<a href="{p["slug"]}">{E(p["h1"])}</a>' for p in [q for q in PAGES if q['cat'] == c][:5]) + f'<a class="more" href="guides#{slug_cat(c)}">Tous les guides « {E(c)} » →</a></div>' for c in CATS if any(p['cat'] == c for p in PAGES))
     dst = '<div><b>Destinations</b><a href="destinations">Toutes les destinations</a>' + ''.join(f'<a href="{DST.th_slug(t)}">{E(DST.THEMES[t][0])}</a>' for t in ['plage', 'ville', 'nature', 'romantique']) + ''.join(f'<a href="{DST.mo_slug(m)}">Où partir en {DST.MOIS[m-1]}</a>' for m in NEXT3) + '</div>'
     return f'''<footer class="foot"><div class="air"></div><div class="wrap"><div class="fcols">{dst}{cols}</div>
-<div class="fbot"><span>Vezoria · le carnet de voyage qu’on remplit à plusieurs</span><span><a href="guides">Tous les guides</a> · <a href="guide-utilisateur">Mode d’emploi</a> · <a href="{LEGAL}">Mentions légales</a> · <a href="{PRIV}">Confidentialité</a></span></div></div></footer>
-<script src="assets/site.js?v=5" defer></script></body></html>'''
+<div class="fbot"><span>Vezoria · le carnet de voyage qu’on remplit à plusieurs</span><span><a href="guides">Tous les guides</a> · <a href="guide-utilisateur">Mode d’emploi</a> · <a href="{LEGAL}">Mentions légales</a> · <a href="{PRIV}">Confidentialité</a>{CK_LINK}</span></div></div></footer>
+<script src="assets/site.js?v=5" defer></script>{DRIVE_JS}</body></html>'''
+
+ON_DRIVE = bool(AFFIL and DRIVE)
+CK_LINK  = f' · <a href="{PRIV}#cookies" data-ck>Cookies</a>' if ON_DRIVE else ''
+DRIVE_JS = f'\n<script src="assets/drive.js?v=1" data-tp="{E(DRIVE)}" defer></script>' if ON_DRIVE else ''
 
 def slug_cat(c): return DST.slugify(c)
 ICON = {'Découvrir':'✨','Préparer':'🧭','Types de voyage':'🧳','Budget':'💸','Checklists':'✅','Partager':'👀','Voyager':'📍','Se souvenir':'📸','L’appli':'📱','Destinations':'🌍'}
@@ -265,6 +282,13 @@ write('404.html', head('Page introuvable · Vezoria', 'Cette page n’existe pas
 
 
 # ── mentions légales et confidentialité DU SITE ──
+if AFFIL:
+    ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par une entreprise individuelle (micro-entreprise) :</p><ul><li><b>Entrepreneur :</b> Anthony Chauvel, entrepreneur individuel (EI)</li><li><b>Nom commercial :</b> {E(ENTREPRISE)}</li><li><b>SIRET :</b> {E(SIRET) if SIRET else "en cours d’attribution"}</li>{f"<li><b>Adresse :</b> {E(ADRESSE)}</li>" if ADRESSE else ""}{f"<li><b>Téléphone :</b> {E(TEL)}</li>" if TEL else ""}<li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul></section>'''
+    AFFIL_RESP = 'Certains liens vers des sites de réservation sont des <b>liens partenaires</b> (affiliation, via la plateforme Travelpayouts) : si tu réserves après avoir touché l’un d’eux, l’éditeur peut percevoir une commission, <b>sans aucun surcoût pour toi</b>. Ces liens sont signalés par la mention « liens partenaires ». Ils ne changent ni le contenu des guides ni le choix des sites cités, qui restent indépendants.'
+else:
+    ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par un particulier, à titre personnel et non professionnel :</p><ul><li><b>Nom :</b> Anthony Chauvel</li><li><b>Qualité :</b> personne physique, éditeur non professionnel</li><li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul><p>Conformément à l’article 6-III-2 de la LCEN, l’éditeur non professionnel peut ne tenir à disposition du public que les éléments permettant de le contacter, son identité complète étant communiquée à l’hébergeur.</p></section>'''
+    AFFIL_RESP = 'Le Site est indépendant : il n’est ni affilié, ni partenaire, ni rémunéré par les sites mentionnés.'
+
 def legal_page(slug, title, desc, h1, body):
     p = {'slug': slug, 'cat': 'Informations', 'title': title, 'desc': desc, 'h1': h1}
     return head(title, desc, slug, 'website', [crumbs_ld(p)]) + topbar() + f"""
@@ -273,21 +297,35 @@ def legal_page(slug, title, desc, h1, body):
 
 write('mentions-legales.html', legal_page('mentions-legales', 'Mentions légales du site Vezoria', 'Mentions légales du site d’information Vezoria : éditeur, hébergement, propriété intellectuelle, responsabilité.', 'Mentions légales', f"""
 <section class="block"><p>Conformément aux articles 6-III et 19 de la loi n° 2004-575 du 21 juin 2004 pour la confiance dans l’économie numérique (LCEN), voici les mentions légales du présent site d’information consacré à Vezoria (ci-après « le Site »). L’application Vezoria a ses propres <a href="{APP_LEGAL}" rel="noopener">mentions légales</a>.</p></section>
-<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par un particulier, à titre personnel et non professionnel :</p><ul><li><b>Nom :</b> Anthony Chauvel</li><li><b>Qualité :</b> personne physique, éditeur non professionnel</li><li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul><p>Conformément à l’article 6-III-2 de la LCEN, l’éditeur non professionnel peut ne tenir à disposition du public que les éléments permettant de le contacter, son identité complète étant communiquée à l’hébergeur.</p></section>
+{ED_BLOCK}
 <section class="block"><h2>2. Directeur de la publication</h2><p>Anthony Chauvel.</p></section>
-<section class="block"><h2>3. Hébergement</h2><p>Le Site est hébergé par <b>Cloudflare Pages</b> : Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis (cloudflare.com). Le nom de domaine vezoria.fr est enregistré auprès d’OVH SAS, 2 rue Kellermann, 59100 Roubaix, France.</p></section>
-<section class="block"><h2>4. Objet du Site</h2><p>Le Site présente l’application gratuite Vezoria et propose des guides pratiques pour préparer un voyage à plusieurs. Il ne vend rien, ne contient aucune publicité et ne demande aucune inscription.</p></section>
+<section class="block"><h2>3. Hébergement</h2><p>Le Site est hébergé par <b>Cloudflare Pages</b> : Cloudflare, Inc., 101 Townsend Street, San Francisco, CA 94107, États-Unis, tél. +1 650 319 8930 (cloudflare.com). Le nom de domaine vezoria.fr est enregistré auprès d’OVH SAS, 2 rue Kellermann, 59100 Roubaix, France.</p></section>
+<section class="block"><h2>4. Objet du Site</h2><p>Le Site présente l’application gratuite Vezoria et propose des guides pratiques pour préparer un voyage à plusieurs. Il ne vend rien, ne contient aucune publicité et ne demande aucune inscription.{" Certains liens vers des sites de réservation sont des liens partenaires (voir l’article 6)." if AFFIL else ""}</p></section>
 <section class="block"><h2>5. Informations indicatives</h2><p>Les informations des guides (périodes conseillées, températures moyennes, durées, budgets, formalités, règles de voyage) sont données <b>à titre indicatif</b>, comme ordres de grandeur et règles générales. Elles peuvent évoluer et ne remplacent pas les sources officielles (diplomatie.gouv.fr, service-public.fr, sites officiels des pays, des transporteurs et des prestataires), qu’il appartient à chacun de consulter avant de partir ou de réserver.</p></section>
-<section class="block"><h2>6. Responsabilité</h2><p>Le Site est fourni « en l’état ». L’éditeur ne saurait être tenu responsable d’une erreur ou d’une omission dans les informations publiées, d’une décision prise sur leur base, ni du contenu des sites externes vers lesquels le Site renvoie. Le Site est indépendant : il n’est ni affilié, ni partenaire, ni rémunéré par les sites mentionnés.</p></section>
+<section class="block"><h2>6. Responsabilité</h2><p>Le Site est fourni « en l’état ». L’éditeur ne saurait être tenu responsable d’une erreur ou d’une omission dans les informations publiées, d’une décision prise sur leur base, ni du contenu des sites externes vers lesquels le Site renvoie. {AFFIL_RESP}</p></section>
 <section class="block"><h2>7. Propriété intellectuelle</h2><p>Les textes, captures d’écran de l’application, illustrations, le nom et le logo Vezoria sont la propriété de l’éditeur. Toute reproduction sans autorisation est interdite, sauf courte citation avec un lien vers le Site. Les captures montrent le voyage de démo de l’application : les personnes et les voyages y sont fictifs.</p></section>
-<section class="block"><h2>8. Données personnelles</h2><p>Le Site ne dépose aucun cookie. La seule donnée personnelle collectée est l’adresse e-mail que tu choisis de laisser pour être prévenu·e du lancement : voir la <a href="confidentialite">politique de confidentialité</a>.</p></section>
+<section class="block"><h2>8. Données personnelles</h2><p>{"Le Site ne dépose aucun cookie sans ton accord : les cookies des liens partenaires ne sont déposés que si tu les acceptes." if ON_DRIVE else "Le Site ne dépose aucun cookie."} La seule donnée personnelle collectée est l’adresse e-mail que tu choisis de laisser pour être prévenu·e du lancement : voir la <a href="confidentialite">politique de confidentialité</a>.</p></section>
 <section class="block"><h2>9. Droit applicable</h2><p>Les présentes mentions sont soumises au droit français.</p></section>"""))
 
-write('confidentialite.html', legal_page('confidentialite', 'Politique de confidentialité du site Vezoria', 'Le site Vezoria ne dépose aucun cookie et n’utilise aucune mesure d’audience. Seule l’adresse e-mail laissée pour être prévenu du lancement est conservée.', 'Politique de confidentialité', f"""
+if ON_DRIVE:
+    PRIV_NOT = '''<section class="block"><h2>2. Ce que le Site ne fait pas</h2><ul><li>Il ne dépose <b>aucun cookie sans ton accord</b> : seuls les cookies des liens partenaires (article 8), si tu les acceptes.</li><li>Il n’utilise <b>aucun outil de mesure d’audience</b> ni de publicité.</li><li>Polices, images et scripts sont hébergés sur le Site lui-même ; le seul service extérieur est celui des liens partenaires, chargé <b>uniquement si tu l’acceptes</b>.</li></ul></section>'''
+    PRIV_CK = '''
+<section class="block" id="cookies"><h2>8. Liens partenaires et cookies</h2>
+<ul><li><b>Le principe :</b> certains liens vers des sites de réservation (vols, hébergement, activités, eSIM, assurance…) sont des liens partenaires. Si tu réserves après en avoir touché un, l’éditeur peut percevoir une commission, <b>sans surcoût pour toi</b>.</li>
+<li><b>Qui :</b> ces liens passent par la plateforme d’affiliation <b>Travelpayouts</b>, exploitée par Go Travel Un Limited (4007 Central Plaza, 18 Harbour Road, Wanchai, Hong Kong), puis par le site partenaire.</li>
+<li><b>Les cookies :</b> pour savoir qu’une réservation vient de Vezoria, Travelpayouts et le site partenaire déposent des cookies et reçoivent des données techniques (adresse IP, navigateur, page d’origine). Ces données peuvent être traitées hors de l’Union européenne. Leurs propres politiques de confidentialité s’appliquent.</li>
+<li><b>Seulement si tu acceptes :</b> au premier passage, un bandeau te laisse le choix « Accepter » ou « Refuser ». Tant que tu n’as pas accepté, rien n’est chargé depuis Travelpayouts et les liens restent de simples liens directs. Refuser ne change rien d’autre : tout le Site reste accessible.</li>
+<li><b>Ton choix</b> est retenu dans ton navigateur (stockage local, sans cookie) : 6 mois si tu refuses, 13 mois si tu acceptes, puis la question t’est reposée.</li>
+<li><b>Changer d’avis :</b> à tout moment avec le lien « Cookies » en bas de chaque page. Les cookies déjà déposés peuvent être effacés dans les réglages de ton navigateur.</li></ul></section>'''
+else:
+    PRIV_NOT = '''<section class="block"><h2>2. Ce que le Site ne fait pas</h2><ul><li>Il ne dépose <b>aucun cookie</b> et n’utilise <b>aucun stockage</b> dans ton navigateur.</li><li>Il n’utilise <b>aucun outil de mesure d’audience</b> ni de publicité.</li><li>Il ne charge <b>aucun service extérieur</b> : polices, images et scripts sont hébergés sur le Site lui-même.</li></ul></section>'''
+    PRIV_CK = ''
+
+write('confidentialite.html', legal_page('confidentialite', 'Politique de confidentialité du site Vezoria', ('Le site Vezoria n’utilise aucune mesure d’audience et ne dépose aucun cookie sans ton accord. Les cookies des liens partenaires ne sont déposés que si tu les acceptes.' if ON_DRIVE else 'Le site Vezoria ne dépose aucun cookie et n’utilise aucune mesure d’audience. Seule l’adresse e-mail laissée pour être prévenu du lancement est conservée.'), 'Politique de confidentialité', f"""
 <section class="block"><p>Cette politique concerne le présent site d’information. L’application Vezoria a sa propre <a href="{APP_PRIV}" rel="noopener">politique de confidentialité</a>.</p>
-<div class="feats"><div class="feat"><i>🍪</i><b>Aucun cookie</b><span>Ni cookie, ni traceur, ni stockage dans ton navigateur.</span></div><div class="feat"><i>📊</i><b>Aucune statistique</b><span>Pas de mesure d’audience, pas de Google Analytics.</span></div><div class="feat"><i>📢</i><b>Aucune publicité</b><span>Aucune régie, aucun réseau social intégré.</span></div><div class="feat"><i>✉️</i><b>Un seul formulaire, facultatif</b><span>Ton e-mail, seulement si tu veux être prévenu·e du lancement.</span></div></div></section>
-<section class="block"><h2>1. Responsable</h2><p>Anthony Chauvel, éditeur non professionnel — <a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
-<section class="block"><h2>2. Ce que le Site ne fait pas</h2><ul><li>Il ne dépose <b>aucun cookie</b> et n’utilise <b>aucun stockage</b> dans ton navigateur.</li><li>Il n’utilise <b>aucun outil de mesure d’audience</b> ni de publicité.</li><li>Il ne charge <b>aucun service extérieur</b> : polices, images et scripts sont hébergés sur le Site lui-même.</li></ul></section>
+<div class="feats">{'<div class="feat"><i>🍪</i><b>Aucun cookie sans ton accord</b><span>Seulement ceux des liens partenaires, et seulement si tu dis oui.</span></div>' if ON_DRIVE else '<div class="feat"><i>🍪</i><b>Aucun cookie</b><span>Ni cookie, ni traceur, ni stockage dans ton navigateur.</span></div>'}<div class="feat"><i>📊</i><b>Aucune statistique</b><span>Pas de mesure d’audience, pas de Google Analytics.</span></div><div class="feat"><i>📢</i><b>Aucune publicité</b><span>Aucune régie, aucun réseau social intégré.</span></div><div class="feat"><i>✉️</i><b>Un seul formulaire, facultatif</b><span>Ton e-mail, seulement si tu veux être prévenu·e du lancement.</span></div></div></section>
+<section class="block"><h2>1. Responsable</h2><p>Anthony Chauvel, {f"entrepreneur individuel ({E(ENTREPRISE)})" if AFFIL else "éditeur non professionnel"} — <a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
+{PRIV_NOT}
 <section class="block" id="liste"><h2>3. La liste « Me prévenir du lancement »</h2>
 <ul><li><b>Ce qui est enregistré :</b> ton adresse e-mail, la date d’inscription, la page depuis laquelle tu t’es inscrit·e et, si tu le choisis, ta façon de voyager (entre amis, en famille…). Une empreinte chiffrée et non réversible de ton adresse IP sert seulement à bloquer les inscriptions en rafale (anti-robots) : elle est effacée automatiquement une heure après ton inscription (au prochain passage du Site) et ne permet pas de te retrouver.</li>
 <li><b>Pourquoi :</b> t’envoyer <b>un seul e-mail</b> pour t’annoncer le lancement de Vezoria. Aucune lettre d’information, aucune revente, aucun partage.</li>
@@ -297,8 +335,8 @@ write('confidentialite.html', legal_page('confidentialite', 'Politique de confid
 <li><b>Te désinscrire :</b> écris à <a href="mailto:{CONTACT}">{CONTACT}</a> ; ton adresse est supprimée. L’e-mail de lancement contiendra aussi un lien de désinscription.</li></ul></section>
 <section class="block"><h2>4. Le petit script du Site</h2><p>Un script affiche {"les boutons Retour, Menu et Haut de page, et envoie le formulaire « Me prévenir » sans recharger la page (et, après le lancement, le bon bouton d’installation selon ton téléphone)" if PRELAUNCH else "le bon bouton d’installation (iPhone ou Android) et les boutons Retour, Menu et Haut de page"}. Il ne lit ni n’enregistre rien d’autre.</p></section>
 <section class="block"><h2>5. L’hébergeur</h2><p>Comme tout hébergeur, Cloudflare (Cloudflare Pages) reçoit des données techniques au moment où une page est demandée (notamment l’adresse IP), pour acheminer la page et assurer la sécurité du service. Ces données sont traitées par Cloudflare selon sa propre politique de confidentialité ; l’éditeur n’y a pas accès. Cloudflare peut traiter des données hors de l’Union européenne, dans le cadre des clauses contractuelles types et du cadre de protection des données UE–États-Unis.</p></section>
-<section class="block"><h2>6. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria, un site officiel ou un site de réservation (vols, hébergement, activités, eSIM, assurance…), tu quittes le Site : la politique de confidentialité de ce site s’applique alors. {"" if not AFFIL else "Certains de ces liens sont des liens partenaires (affiliation) : ils permettent au site partenaire de savoir que tu viens de Vezoria ; l’éditeur peut percevoir une commission, sans surcoût pour toi. Le Site lui-même ne dépose aucun cookie."}</p></section>
-<section class="block"><h2>7. Tes droits</h2><p>Tu peux accéder à ton adresse, la faire corriger ou effacer, et retirer ton consentement : <a href="mailto:{CONTACT}">{CONTACT}</a>. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).</p></section>"""))
+<section class="block"><h2>6. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria, un site officiel ou un site de réservation (vols, hébergement, activités, eSIM, assurance…), tu quittes le Site : la politique de confidentialité de ce site s’applique alors. {"" if not AFFIL else "Certains de ces liens sont des liens partenaires (affiliation) : ils permettent au site partenaire de savoir que tu viens de Vezoria ; l’éditeur peut percevoir une commission, sans surcoût pour toi. Voir aussi l’article 8."}</p></section>
+<section class="block"><h2>7. Tes droits</h2><p>Tu peux accéder à ton adresse, la faire corriger ou effacer, et retirer ton consentement : <a href="mailto:{CONTACT}">{CONTACT}</a>. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).</p></section>{PRIV_CK}"""))
 
 # page « merci » (après le formulaire), non référencée
 write('merci.html', head('Merci · Vezoria', 'Inscription à l’annonce du lancement de Vezoria.', 'merci', 'website').replace('index,follow,max-image-preview:large,max-snippet:-1', 'noindex,follow') + topbar() + f"""
@@ -309,5 +347,17 @@ write('merci.html', head('Merci · Vezoria', 'Inscription à l’annonce du lanc
 # ── sitemap, robots ──
 urls = [('', '1.0', 'weekly'), ('guides', '0.9', 'weekly'), ('destinations', '0.9', 'weekly'), ('guide-utilisateur', '0.8', 'monthly')] + [(p['slug'], '0.8', 'monthly') for p in PAGES] + [(p['slug'], '0.7', 'monthly') for p in DPAGES + MPAGES + TPAGES + [PLUGP]] + [('mentions-legales', '0.2', 'yearly'), ('confidentialite', '0.2', 'yearly')]
 write('sitemap.xml', '<?xml version="1.0" encoding="UTF-8"?>\n<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">\n' + ''.join(f'  <url><loc>{SITE}/{u}</loc><lastmod>{TODAY}</lastmod><changefreq>{f}</changefreq><priority>{pr}</priority></url>\n' for u, pr, f in urls) + '</urlset>\n')
+CSP = ("default-src 'self'; script-src 'self' https:; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self'; connect-src 'self' https:; frame-src https:; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests"
+       if ON_DRIVE else "default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data:; font-src 'self'; connect-src 'self'; object-src 'none'; base-uri 'self'; form-action 'self'; frame-ancestors 'self'; upgrade-insecure-requests")
+write('_headers', f'''/*
+  X-Content-Type-Options: nosniff
+  X-Frame-Options: SAMEORIGIN
+  Referrer-Policy: strict-origin-when-cross-origin
+  Strict-Transport-Security: max-age=31536000
+  Content-Security-Policy: {CSP}
+  Permissions-Policy: camera=(), microphone=(), geolocation=(), payment=(), browsing-topics=()
+/assets/*
+  Cache-Control: public, max-age=2592000
+''')
 write('robots.txt', f'User-agent: *\nAllow: /\nDisallow: /api/\nDisallow: /merci\n\nSitemap: {SITE}/sitemap.xml\n')
 print(len(urls) + 1, 'pages générées')
