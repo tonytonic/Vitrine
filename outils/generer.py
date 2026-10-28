@@ -139,7 +139,7 @@ ON_DRIVE = bool(AFFIL and DRIVE)
 CK_LINK  = f' · <a href="{PRIV}#cookies" data-ck>Cookies</a>' if ON_DRIVE else ''
 # Avant AFFIL = True, drive.js est quand même présent mais ne fait RIEN, sauf sur le téléphone de l'éditeur
 # passé une fois par https://vezoria.fr/?drive=test (mode test ; ?drive=off pour l'arrêter).
-DRIVE_JS = f'\n<script src="assets/drive.js?v=2" data-tp="{E(DRIVE)}" data-on="{1 if ON_DRIVE else 0}" defer></script>' if DRIVE else ''
+DRIVE_JS = f'\n<script src="assets/drive.js?v=3" data-tp="{E(DRIVE)}" data-on="{1 if ON_DRIVE else 0}" defer></script>' if DRIVE else ''
 
 def slug_cat(c): return DST.slugify(c)
 ICON = {'Découvrir':'✨','Préparer':'🧭','Types de voyage':'🧳','Budget':'💸','Checklists':'✅','Partager':'👀','Voyager':'📍','Se souvenir':'📸','L’appli':'📱','Destinations':'🌍'}
