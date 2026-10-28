@@ -30,12 +30,25 @@ TODAY  = datetime.date.today().isoformat()
 #    Aucun script extérieur, aucun cookie sur vezoria.fr : le suivi ne commence qu’une fois le visiteur parti
 #    chez Travelpayouts puis chez le partenaire (pas de bandeau cookies nécessaire sur le site).
 AFFIL = False
-# Liens Travelpayouts (projet « Vezoria », site) : lien partenaire = tp.media/r?marker=…&trs=…&p=…&u=<adresse>
-TP_MARKER = ''            # ton identifiant partenaire (le nombre après marker= dans un lien généré)
-TP_TRS    = '592113'      # projet « Vezoria » (site)
-TP = {                    # numéro de programme (le nombre après p= dans le lien généré) ; vide = lien direct
-    'kiwi': '', 'tiqets': '', 'economy': '', 'airalo': '', 'airhelp': '',
+# Liens Travelpayouts générés pour le projet « Vezoria » (site, 592113). Utilisés seulement quand AFFIL = True ;
+# sinon le site garde les liens directs. Vide = lien direct même avec AFFIL = True.
+TP_LINK = {
+    'kiwi':     'https://kiwi.tpm.lv/FehUPYcE',      # FR: Main page
+    'tiqets':   'https://tiqets.tpm.lv/VzP0FFPc',      # tiqets.com/fr/
+    'economy':  'https://economybookings.tpm.lv/zbdBXKAn',
+    'airalo':   'https://airalo.tpm.lv/aGelXLZZ',      # airalo.com/fr
+    'airhelp':  'https://airhelp.tpm.lv/gBuB7Rlj',     # airhelp.com/fr/
+    'booking':  '',                                      # ⏳ en attente d'acceptation chez Travelpayouts
 }
+# Autres liens déjà générés, pas encore utilisés sur le site (en réserve) :
+#   Klook https://klook.tpm.lv/xObcEs68 · Yesim https://yesim.tpm.lv/EcSXOu0L · Kiwitaxi https://kiwitaxi.tpm.lv/SZbfj26d
+#   Localrent https://localrent.tpm.lv/epoXl6ed · GetTransfer https://gettransfer.tpm.lv/v0jwDoNP
+#   Drimsim https://drimsim.tpm.lv/vk4OScdu · GetRentacar https://getrentacar.tpm.lv/6e4JsubK · Go City https://gocity.tpm.lv/3QGfc1sw
+#   BikesBooking https://bikesbooking.tpm.lv/yBh3LyqM · QEEQ https://qeeq.tpm.lv/RWbJgjx5 · Welcome Pickups https://tpm.lv/lDLQAGc8
+#   WeGoTrip https://wegotrip.tpm.lv/v7U7vdW2 · AutoEurope https://autoeurope.tpm.lv/MRWzSZgr
+#   Radical Storage https://radicalstorage.tpm.lv/ia5GL1UU · Aviasales https://aviasales.tpm.lv/c5ZRt5Pz
+#   intui.travel https://intui.tpm.lv/xneywiCL · Compensair https://compensair.tpm.lv/7x9e2prt
+#   Saily https://saily.tpm.lv/e7JLF3BY · KKday https://kkday.tpm.lv/lEeb6k51
 # 🏢 L’ÉDITEUR PROFESSIONNEL, affiché quand AFFIL = True (la loi LCEN demande ces informations à un pro)
 ENTREPRISE = 'CELMAR APPS'
 SIRET   = ''              # vide = « en cours d’attribution » ; à remplir dès réception
@@ -45,11 +58,10 @@ MAJ = '1er novembre 2026' if AFFIL else '21 octobre 2026'
 if AFFIL and not (ADRESSE and TEL): print('⚠️  AFFIL = True : remplis ADRESSE et TEL dans outils/generer.py (mentions légales)')
 from urllib.parse import quote
 def tp_wrap(k, url):
-    if not (AFFIL and TP_MARKER and TP.get(k)): return url
-    return f'https://tp.media/r?marker={TP_MARKER}&trs={TP_TRS}&p={TP[k]}&u={quote(url, safe="")}'
+    return TP_LINK[k] if AFFIL and TP_LINK.get(k) else url
 # Marques choisies parmi les programmes DÉJÀ DISPONIBLES pour le projet Vezoria chez Travelpayouts :
 # Kiwi.com, Tiqets, Economybookings, Airalo, AirHelp. Booking.com reste en attente d'acceptation (programme
-# « à débloquer ») : le jour où il est accepté, ajouter 'booking': '<numéro>' dans TP.
+# « à débloquer ») : le jour où il est accepté, mettre son lien dans TP_LINK['booking'].
 PARTNERS = {
     'kiwi':        ('✈️', 'Kiwi.com',      lambda c: 'https://www.kiwi.com/fr/'),
     'booking':     ('🛏️', 'Booking.com',   lambda c: 'https://www.booking.com/searchresults.fr.html?ss=' + quote(c) if c else 'https://www.booking.com/index.fr.html'),
