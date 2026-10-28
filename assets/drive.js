@@ -21,7 +21,22 @@
     if(loaded) return; loaded = true;
     var s = document.createElement('script'); s.async = true; s.setAttribute('data-cmp-ab', '2');
     s.src = 'https://emrldtp.cc/' + btoa(TP).replace(/=+$/, '') + '.js?t=' + TP;   // = le code donné par Travelpayouts
+    if(test){
+      s.onload = function(){ badge('✅ Drive chargé', '#0f8a5f'); setTimeout(count, 3000); };
+      s.onerror = function(){ badge('❌ Drive pas chargé (bloqué par le navigateur ou le site)', '#c0392b'); };
+    }
     document.head.appendChild(s);
+  }
+  // mode test : petit indicateur en haut de page, visible seulement sur l'appareil de l'éditeur
+  function badge(t, col){
+    var b = document.getElementById('vz-dt'); if(!b){ b = document.createElement('div'); b.id = 'vz-dt'; document.body.appendChild(b); }
+    b.style.cssText = 'position:fixed;top:8px;left:8px;right:8px;z-index:60;background:' + col + ';color:#fff;font:600 13px/1.35 system-ui,sans-serif;padding:8px 10px;border-radius:10px;text-align:center';
+    b.textContent = 'MODE TEST · ' + t;
+  }
+  function count(){
+    var all = document.querySelectorAll('a[href^="http"]'), n = 0, ext = 0;
+    for(var i = 0; i < all.length; i++){ var h = all[i].href; if(h.indexOf(location.host) > -1) continue; ext++; if(/tp\.media|tp\.st|tpk\.|emrld|travelpayouts|marker=|592113/.test(h)) n++; }
+    badge('✅ Drive chargé · ' + n + ' lien(s) sur ' + ext + ' déjà converti(s)' + (n ? '' : ' (sinon conversion au moment du toucher)'), '#0f8a5f');
   }
   function banner(){
     var old = document.getElementById('vz-ck'); if(old) old.remove();
@@ -33,6 +48,7 @@
     d.querySelector('.ck-no').onclick = function(){ var was = loaded; set(false); d.remove(); if(was) location.reload(); };
   }
   var c = get();
+  if(test && !(c && c.ok)) setTimeout(function(){ badge(c ? '⛔ Cookies refusés : Drive pas chargé (?drive=off pour recommencer)' : '⏳ Touche « Accepter » pour charger Drive', '#5b2a86'); }, 50);
   if(c && c.ok) load(); else if(!c) banner();
   // lien « Cookies » en bas de page : redonne le choix
   document.addEventListener('click', function(e){ var a = e.target.closest && e.target.closest('[data-ck]'); if(a){ e.preventDefault(); banner(); } });
