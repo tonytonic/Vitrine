@@ -530,7 +530,7 @@ feat('installer-vezoria-iphone', 'Installer Vezoria sur iPhone (en 30 secondes)'
   [('Les trois gestes', '<ol><li>Ouvre le lien de Vezoria dans <b>Safari</b>.</li><li>Touche le bouton <b>Partager</b> (le carré avec une flèche).</li><li>Choisis <b>« Sur l’écran d’accueil »</b>, puis <b>« Ajouter »</b>.</li></ol>'),
    ('Toujours depuis l’icône', '<p>Ouvre ensuite Vezoria depuis son icône : c’est là que ton carnet est rangé, et les notifications fonctionnent.</p>')],
   [('accueil','Vezoria une fois installée')],
-  ['installer-vezoria-android','application-voyage-gratuite-sans-pub','carnet-de-voyage-partage'])
+  ['installer-vezoria-android','installer-vezoria-pc','carnet-de-voyage-partage'])
 
 feat('installer-vezoria-android', 'Installer Vezoria sur Android (Play Store)',
   'Comment installer Vezoria sur Android : depuis le Play Store, gratuitement. Puis choisir sa langue, son prénom et sa couleur.',
@@ -538,4 +538,13 @@ feat('installer-vezoria-android', 'Installer Vezoria sur Android (Play Store)',
   [('Depuis le Play Store', '<ol><li>Ouvre le <b>Play Store</b>.</li><li>Cherche <b>Vezoria</b>.</li><li>Touche <b>Installer</b>.</li></ol>'),
    ('Au premier lancement', '<p>Choisis ta langue et ta devise, puis ton prénom et ta couleur. Tu peux aussi commencer avec le voyage de démo.</p>')],
   [('mes-voyages','Tes voyages dans Vezoria')],
-  ['installer-vezoria-iphone','application-voyage-gratuite-sans-pub','guide-utilisateur'])
+  ['installer-vezoria-iphone','installer-vezoria-pc','guide-utilisateur'])
+
+feat('installer-vezoria-pc', 'Installer Vezoria sur ordinateur (PC Windows ou Mac)',
+  'Comment utiliser Vezoria sur ordinateur : l’ouvrir dans Chrome, Edge ou Safari, puis l’installer en un clic pour la retrouver comme un logiciel. Ton carnet sur grand écran.',
+  'Installer Vezoria sur ordinateur', 'Sur PC ou sur Mac, Vezoria s’ouvre dans le navigateur et s’installe en un clic : pratique pour préparer le voyage sur grand écran.',
+  [('Sur PC (Windows) ou Mac, avec Chrome ou Edge', '<ol><li>Ouvre le lien de Vezoria dans <b>Chrome</b> ou <b>Edge</b>.</li><li>Clique sur l’icône <b>« Installer »</b> au bout de la barre d’adresse (un petit écran avec une flèche), ou menu <b>⋮</b> → <b>« Installer Vezoria »</b>.</li><li>Vezoria s’ouvre dans sa propre fenêtre et se retrouve dans le menu Démarrer (ou le Launchpad sur Mac).</li></ol>'),
+   ('Sur Mac, avec Safari', '<ol><li>Ouvre le lien de Vezoria dans <b>Safari</b>.</li><li>Menu <b>Fichier</b> → <b>« Ajouter au Dock »</b>.</li></ol><p>Firefox ne sait pas installer les applis web : utilise plutôt Chrome, Edge ou Safari.</p>'),
+   ('Ton carnet sur l’ordinateur et sur le téléphone', '<p>Pour retrouver le même carnet sur l’ordinateur et sur ton téléphone, active le cloud dans l’appli, puis ajoute ton ordinateur avec ton code (☁️ Cloud → « Tu as déjà un code ? »). Ensuite, ouvre toujours Vezoria depuis son icône : le navigateur et l’appli installée ne partagent pas leurs données.</p>')],
+  [('mes-voyages','Tes voyages dans Vezoria')],
+  ['installer-vezoria-iphone','installer-vezoria-android','guide-utilisateur'])

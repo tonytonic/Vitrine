@@ -119,7 +119,7 @@ def head(title, desc, path, og_type='article', extra_ld=()):
 <meta name="theme-color" content="#2A1238">
 <link rel="icon" href="assets/img/icon-192.png"><link rel="apple-touch-icon" href="assets/img/apple-touch-icon.png">
 <link rel="preload" href="assets/fonts/outfit-400.woff2" as="font" type="font/woff2" crossorigin>
-<link rel="stylesheet" href="assets/site.css?v=6">
+<link rel="stylesheet" href="assets/site.css?v=7">
 {ld}
 </head><body>'''
 
@@ -132,7 +132,7 @@ TZN = [0]
 def teaser(home=False, src='site'):
     TZN[0] += 1; n = TZN[0]
     return f'''<div class="cta teaser"{' id="lancement"' if home else ''}><div class="tz"><span class="tz-dot"></span><b>Lancement courant {E(LAUNCH)}</b></div>
-<p>Vezoria arrive très bientôt sur Android et iPhone. En attendant, prépare ton prochain voyage avec les guides.</p>
+<p>Vezoria arrive très bientôt sur Android, iPhone et ordinateur (PC ou Mac). En attendant, prépare ton prochain voyage avec les guides.</p>
 <form class="wl" method="post" action="/api/waitlist" data-wl>
 <label class="wl-l" for="wl-e{n}">Sois prévenu·e le jour du lancement</label>
 <div class="wl-r"><input id="wl-e{n}" type="email" name="email" required maxlength="190" autocomplete="email" inputmode="email" placeholder="ton@email.fr"><button class="btn tz1" type="submit">Me prévenir</button></div>
@@ -145,7 +145,7 @@ def teaser(home=False, src='site'):
 
 def cta(label='Installer Vezoria gratuitement', home=False):
     if PRELAUNCH: return teaser(home)
-    return f'''<div class="cta"><a class="btn and" href="{PLAY}" rel="noopener">🤖 Android · Play Store</a><a class="btn ios" href="{APP}" rel="noopener">🍏 iPhone · ouvrir dans Safari</a>
+    return f'''<div class="cta"><a class="btn and" href="{PLAY}" rel="noopener">🤖 Android · Play Store</a><a class="btn ios" href="{APP}" rel="noopener">🍏 iPhone · ouvrir dans Safari</a><a class="btn pc" href="{APP}" rel="noopener">💻 PC · Mac · ouvrir dans le navigateur</a>
 <small>{E(label)} · sans pub · sans compte</small></div>'''
 
 def footer():
@@ -153,7 +153,7 @@ def footer():
     dst = '<div><b>Destinations</b><a href="destinations">Toutes les destinations</a>' + ''.join(f'<a href="{DST.th_slug(t)}">{E(DST.THEMES[t][0])}</a>' for t in ['plage', 'ville', 'nature', 'romantique']) + ''.join(f'<a href="{DST.mo_slug(m)}">Où partir en {DST.MOIS[m-1]}</a>' for m in NEXT3) + '</div>'
     return f'''<footer class="foot"><div class="air"></div><div class="wrap"><div class="fcols">{dst}{cols}</div>
 <div class="fbot"><span>Vezoria · le carnet de voyage qu’on remplit à plusieurs</span><span><a href="guides">Tous les guides</a> · <a href="guide-utilisateur">Mode d’emploi</a> · <a href="{LEGAL}">Mentions légales</a> · <a href="{PRIV}">Confidentialité</a></span></div></div></footer>
-<script src="assets/site.js?v=5" defer></script></body></html>'''
+<script src="assets/site.js?v=6" defer></script></body></html>'''
 
 def slug_cat(c): return DST.slugify(c)
 ICON = {'Découvrir':'✨','Préparer':'🧭','Types de voyage':'🧳','Budget':'💸','Checklists':'✅','Partager':'👀','Voyager':'📍','Se souvenir':'📸','L’appli':'📱','Destinations':'🌍'}
@@ -175,7 +175,7 @@ def crumbs_ld(p):
         {'@type': 'ListItem', 'position': 1, 'name': 'Vezoria', 'item': SITE + '/'},
         {'@type': 'ListItem', 'position': 2, 'name': p['h1'], 'item': SITE + '/' + p['slug']}]}
 
-APP_LD = {'@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': 'Vezoria', 'operatingSystem': 'Android, iOS',
+APP_LD = {'@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': 'Vezoria', 'operatingSystem': 'Android, iOS, Windows, macOS',
           'applicationCategory': 'TravelApplication', 'inLanguage': 'fr', 'url': SITE + '/',
           'description': 'Carnet de voyage partagé : programme jour par jour, réservations, budget partagé, checklist, souvenirs. Gratuit, sans publicité, sans compte.',
           'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'image': SITE + '/assets/img/og.jpg', **({} if PRELAUNCH else {'downloadUrl': PLAY})}
@@ -197,7 +197,7 @@ PLUGP = DST.plug_page(E)
 for g in DPAGES + MPAGES + TPAGES + [PLUGP]: BY[g['slug']] = g
 BY['destinations'] = {'slug': 'destinations', 'cat': 'Destinations', 'h1': 'Toutes les destinations', 'desc': f'{len(DST.D)} destinations avec la meilleure période, la durée idéale, le budget par jour et les formalités, pour préparer ton voyage.'}
 BY['guides'] = {'slug': 'guides', 'cat': 'Découvrir', 'h1': 'Tous les guides', 'desc': 'Tous les guides pour préparer, vivre et garder un voyage à plusieurs : budget, checklists, types de voyage, l’appli.'}
-BY['guide-utilisateur'] = {'slug': 'guide-utilisateur', 'cat': 'L’appli', 'h1': 'Le mode d’emploi de Vezoria', 'desc': 'Le mode d’emploi complet de Vezoria : 81 pages illustrées, chaque bouton expliqué, de l’installation aux souvenirs.'}
+BY['guide-utilisateur'] = {'slug': 'guide-utilisateur', 'cat': 'L’appli', 'h1': 'Le mode d’emploi de Vezoria', 'desc': 'Le mode d’emploi complet de Vezoria : 66 pages illustrées, chaque bouton expliqué, de l’installation aux souvenirs.'}
 
 def simple_page(p, body, lds=(), with_cta=True):
     return head(p['title'], p['desc'], p['slug'], 'article', [crumbs_ld(p), *lds]) + topbar() + f'''
@@ -282,19 +282,19 @@ home = head('Vezoria · carnet de voyage partagé, gratuit et sans pub', 'Vezori
 {"".join(acc(r, '<div class="cards">' + "".join(card(BY[DST.dslug(x)]) for x in sorted([x for x in DST.D if DST.REG.get(x[2]) == r], key=lambda x: x[0])) + '</div>', len([x for x in DST.D if DST.REG.get(x[2]) == r]), '🌍') for r in DST.REGION if any(DST.REG.get(x[2]) == r for x in DST.D))}
 </section>
 <section class="block" id="guides"><h2>Les guides</h2><p>Touche une rubrique pour l’ouvrir.</p>{groups}</section>
-<section class="block guide-b"><div><h2>Le mode d’emploi complet</h2><p>81 pages illustrées, chaque bouton expliqué, de l’installation aux souvenirs.</p><a class="btn and" href="guide-utilisateur">Voir le mode d’emploi</a></div><img src="assets/img/bilan.webp" alt="Le bilan d’un voyage dans Vezoria" width="200" height="433" loading="lazy"></section>
+<section class="block guide-b"><div><h2>Le mode d’emploi complet</h2><p>66 pages illustrées, chaque bouton expliqué, de l’installation aux souvenirs.</p><a class="btn and" href="guide-utilisateur">Voir le mode d’emploi</a> <a class="btn and" href="guide-utilisateur#tuto">▶ Le tuto vidéo (3 min)</a></div><img src="assets/img/bilan.webp" alt="Le bilan d’un voyage dans Vezoria" width="200" height="433" loading="lazy"></section>
 {faq_html(FAQ_HOME)}</main>''' + footer()
 write('index.html', home)
 
 # ── mode d'emploi ──
 chap = ['Bienvenue', 'Premiers pas', 'L’écran du voyage', 'Mes voyages', 'Créer un voyage', 'Le programme jour par jour', 'Les réservations', 'Le budget', 'Bagages et papiers', 'Voyager à plusieurs', 'Qui voit quoi ?', 'Les abonnés', 'Pendant le voyage', 'Souvenirs et bilan', 'Envies, notes et outils', 'Réglages et sécurité', 'Questions fréquentes']
 gp = {'slug': 'guide-utilisateur', 'h1': 'Mode d’emploi de Vezoria'}
-guide = head('Mode d’emploi de Vezoria (PDF illustré, 81 pages)', 'Le mode d’emploi complet de Vezoria : 81 pages illustrées, chaque bouton expliqué, de l’installation aux souvenirs. Téléchargement gratuit en PDF.', 'guide-utilisateur', 'article', [crumbs_ld(gp)]) + topbar() + f'''
+guide = head('Mode d’emploi de Vezoria (PDF illustré, 66 pages) et tuto vidéo', 'Le mode d’emploi complet de Vezoria : 66 pages illustrées, chaque bouton expliqué, de l’installation aux souvenirs. Téléchargement gratuit en PDF.', 'guide-utilisateur', 'article', [crumbs_ld(gp)]) + topbar() + f'''
 <div class="hero"><div class="wrap"><nav class="crumbs"><a href="./">Vezoria</a> › <span>Mode d’emploi</span></nav><h1>Le mode d’emploi de Vezoria</h1>
-<p class="lead">81 pages illustrées avec de vraies captures de l’appli : chaque bouton est expliqué dans une bulle, de l’installation aux souvenirs.</p>
-<div class="cta"><a class="btn and" href="assets/vezoria-guide-utilisateur.pdf" download>📥 Télécharger le PDF (14 Mo)</a></div></div><div class="air"></div></div>
-<main class="wrap"><section class="block"><h2>Au sommaire</h2><ol class="toc">{"".join(f"<li>{E(c)}</li>" for c in chap)}</ol></section>
-<section class="block withph">{phone("assistant", "L’assistant de création de voyage")}<div class="txt"><h2>Pour qui ?</h2><p>Pour tous : ceux qui découvrent l’appli, ceux qui veulent tout savoir, et ceux qui veulent aider un proche à s’en servir. Le guide utilise le voyage de démo de l’appli (trois semaines au Japon avec Léo, Inès et Camille) : tu peux le charger dans l’appli et suivre les pages en même temps.</p></div></section>
+<p class="lead">66 pages illustrées avec de vraies captures de l’appli : chaque bouton est expliqué, de l’installation aux souvenirs. Et un tuto vidéo de 3 minutes pour tout voir d’un coup.</p>
+<div class="cta"><a class="btn and" href="assets/vezoria-guide-utilisateur.pdf" download>📥 Télécharger le PDF (8 Mo)</a></div></div><div class="air"></div></div>
+<main class="wrap"><section class="block" id="tuto"><h2>Le tuto vidéo (3 min)</h2><p>Les 4 moments du carnet sur le voyage de démo (trois semaines en Italie) : créer un voyage, le préparer, le vivre, puis s’en souvenir.</p><video class="tuto-v" src="assets/vezoria-tuto.mp4" poster="assets/img/tuto-poster.jpg" controls playsinline preload="none" width="360" height="780"></video></section><section class="block"><h2>Au sommaire</h2><ol class="toc">{"".join(f"<li>{E(c)}</li>" for c in chap)}</ol></section>
+<section class="block withph">{phone("assistant", "L’assistant de création de voyage")}<div class="txt"><h2>Pour qui ?</h2><p>Pour tous : ceux qui découvrent l’appli, ceux qui veulent tout savoir, et ceux qui veulent aider un proche à s’en servir. Le guide utilise le voyage de démo de l’appli (trois semaines en Italie avec Léo, Inès et Camille) : tu peux le charger dans l’appli et suivre les pages en même temps.</p></div></section>
 {cta()}</main>''' + footer()
 write('guide-utilisateur.html', guide)
 
@@ -340,7 +340,7 @@ write('confidentialite.html', legal_page('confidentialite', 'Politique de confid
 <li><b>Combien de temps :</b> jusqu’à l’envoi de l’e-mail de lancement, puis la liste est effacée, et au plus tard le 31 mars 2027.</li>
 <li><b>Où :</b> dans une base de données Cloudflare D1 rattachée au Site, accessible uniquement par l’éditeur.</li>
 <li><b>Te désinscrire :</b> écris à <a href="mailto:{CONTACT}">{CONTACT}</a> ; ton adresse est supprimée. L’e-mail de lancement contiendra aussi un lien de désinscription.</li></ul></section>
-<section class="block"><h2>4. Le petit script du Site</h2><p>Un script affiche {"les boutons Retour, Menu et Haut de page, et envoie le formulaire « Me prévenir » sans recharger la page (et, après le lancement, le bon bouton d’installation selon ton téléphone)" if PRELAUNCH else "le bon bouton d’installation (iPhone ou Android) et les boutons Retour, Menu et Haut de page"}. Il ne lit ni n’enregistre rien d’autre.</p></section>
+<section class="block"><h2>4. Le petit script du Site</h2><p>Un script affiche {"les boutons Retour, Menu et Haut de page, et envoie le formulaire « Me prévenir » sans recharger la page (et, après le lancement, le bon bouton d’installation selon ton appareil)" if PRELAUNCH else "le bon bouton d’installation (iPhone, Android ou ordinateur) et les boutons Retour, Menu et Haut de page"}. Il ne lit ni n’enregistre rien d’autre.</p></section>
 <section class="block"><h2>5. L’hébergeur</h2><p>Comme tout hébergeur, Cloudflare (Cloudflare Pages) reçoit des données techniques au moment où une page est demandée (notamment l’adresse IP), pour acheminer la page et assurer la sécurité du service. Ces données sont traitées par Cloudflare selon sa propre politique de confidentialité ; l’éditeur n’y a pas accès. Cloudflare peut traiter des données hors de l’Union européenne, dans le cadre des clauses contractuelles types et du cadre de protection des données UE–États-Unis. <b>Mesure d’audience</b> : le Site utilise Cloudflare Web Analytics. Un petit script compte les pages vues et mesure leur vitesse d’affichage, <b>sans cookie, sans identifiant et sans suivi d’un site à l’autre</b> ; l’éditeur ne voit que des totaux (pages vues, pays, type d’appareil). Ce type de mesure anonyme ne demande pas ton consentement.</p></section>
 <section class="block"><h2>6. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria, un site officiel ou un site de réservation (vols, hébergement, activités, eSIM, assurance…), tu quittes le Site : la politique de confidentialité de ce site s’applique alors. {"" if not AFFIL else "Certains de ces liens sont des liens partenaires (affiliation) : ils passent d’abord par la plateforme Travelpayouts (Go Travel Un Limited, Hong Kong), puis t’amènent chez le partenaire. Une fois que tu as quitté le Site, Travelpayouts et le partenaire peuvent déposer leurs propres cookies et recevoir des données techniques (adresse IP, navigateur, page d’origine), éventuellement hors de l’Union européenne, pour savoir qu’une réservation vient de Vezoria ; leurs politiques de confidentialité s’appliquent alors. L’éditeur peut percevoir une commission, sans surcoût pour toi. Le Site lui-même ne dépose aucun cookie et ne transmet rien à ces sites."}</p></section>
 <section class="block"><h2>7. Tes droits</h2><p>Tu peux accéder à ton adresse, la faire corriger ou effacer, et retirer ton consentement : <a href="mailto:{CONTACT}">{CONTACT}</a>. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).</p></section>"""))

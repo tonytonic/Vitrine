@@ -54,7 +54,7 @@ page(slug='carnet-de-voyage-partage',
    ('Pensé pour les vraies conditions du voyage', '<ul><li><b>Hors ligne</b> : programme, billets et papiers restent consultables sans réseau.</li><li><b>Sans compte</b> : pas d’adresse e-mail, pas de mot de passe, juste un prénom.</li><li><b>Sans publicité</b> et gratuit.</li><li><b>Protégé</b> : un voyage partagé n’est visible que par ceux qui ont reçu son invitation.</li><li><b>En 14 langues</b>, pour les groupes internationaux.</li></ul>'),
   ],
   shots=[('accueil','L’écran principal d’un voyage dans Vezoria'),('mes-voyages','La liste des voyages, chacun sous forme de carte postale'),('bilan','Le bilan d’un voyage terminé : jours, kilomètres, pays, photos')],
-  faq=[('Vezoria fonctionne sur iPhone ?','Oui. Sur iPhone, Vezoria s’ajoute à l’écran d’accueil depuis Safari et s’utilise comme une appli. Sur Android, elle s’installe depuis le Play Store.'),
+  faq=[('Vezoria fonctionne sur iPhone ?','Oui. Sur iPhone, Vezoria s’ajoute à l’écran d’accueil depuis Safari et s’utilise comme une appli. Sur Android, elle s’installe depuis le Play Store. Et sur ordinateur (PC ou Mac), elle s’ouvre dans le navigateur et s’installe en un clic.'),
        ('Mes données sont-elles revendues ?','Non. Il n’y a ni publicité ni pistage. Les voyages partagés sont chiffrés : seuls ceux qui ont l’invitation peuvent les lire.'),
        ('Peut-on l’utiliser seul ?','Bien sûr. Le carnet fonctionne aussi pour un voyage en solo, et vous pouvez inviter quelqu’un plus tard.')],
   rel=['organiser-voyage-entre-amis','souvenirs-voyage-album','application-voyage-gratuite-sans-pub'])
@@ -218,7 +218,8 @@ page(slug='application-voyage-gratuite-sans-pub',
   ],
   shots=[('cloud','Le choix de sauvegarde : tout le carnet, voyage par voyage ou sans cloud'),('lecture-seule','Le mode lecture seule')],
   faq=[('Comment l’installer sur iPhone ?','Ouvrez le lien de Vezoria dans Safari, touchez Partager puis « Sur l’écran d’accueil ».'),
-       ('Et sur Android ?','Installez Vezoria depuis le Play Store.')],
+       ('Et sur Android ?','Installez Vezoria depuis le Play Store.'),
+       ('Et sur ordinateur ?','Ouvrez Vezoria dans Chrome ou Edge (PC ou Mac) et cliquez sur l’icône « Installer » de la barre d’adresse. Sur Mac, Safari propose aussi Fichier → « Ajouter au Dock ».')],
   rel=['carnet-de-voyage-partage','suivre-voyage-famille','organiser-voyage-entre-amis'])
 
 page(slug='idees-de-voyage',
@@ -238,7 +239,7 @@ page(slug='idees-de-voyage',
 FAQ_HOME = [
  ('Qu’est-ce que Vezoria ?','Un carnet de voyage que l’on remplit à plusieurs : programme jour par jour, réservations, budget partagé, checklist, souvenirs. Gratuit, sans publicité et sans compte.'),
  ('Vezoria est-elle gratuite ?','Oui, entièrement, sans publicité ni abonnement.'),
- ('Sur quels téléphones ?','Sur Android depuis le Play Store, et sur iPhone en l’ajoutant à l’écran d’accueil depuis Safari.'),
+ ('Sur quels appareils ?','Sur Android depuis le Play Store, sur iPhone en l’ajoutant à l’écran d’accueil depuis Safari, et sur ordinateur (PC ou Mac) depuis le navigateur.'),
  ('Ma famille peut-elle suivre mon voyage ?','Oui, depuis un simple lien, sans installer d’appli. Elle voit seulement les étapes et les photos que vous publiez.'),
  ('Ça marche sans réseau ?','Oui : programme, billets et papiers restent consultables hors ligne.'),
 ]
