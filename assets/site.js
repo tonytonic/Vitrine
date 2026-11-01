@@ -21,20 +21,32 @@
       '<ol class="vz-steps"><li>Touche <b>« Ouvrir Vezoria »</b> ci-dessous.</li><li>Dans Safari, touche le bouton <b>Partager</b> <span class="vz-ic">⬆︎</span> (le carré avec une flèche).</li><li>Choisis <b>« Sur l’écran d’accueil »</b>, puis <b>« Ajouter »</b>.</li></ol>' +
       '<a class="btn and vz-go" href="' + APP + '">🍏 Ouvrir Vezoria</a><p class="vz-small">Ensuite, ouvre toujours Vezoria depuis son icône.</p>');
   }
+  function pcSheet(){
+    var mac = /Macintosh/.test(ua), edge = /Edg\//.test(ua), chrome = /Chrome\//.test(ua) && !edge && !/OPR\//.test(ua), fx = /Firefox\//.test(ua), saf = !chrome && !edge && !fx && /Safari\//.test(ua);
+    sheet('<h2>Installer Vezoria sur ordinateur</h2>' +
+      (fx ? '<p class="vz-warn">⚠️ Firefox ne sait pas installer les applis web : ouvre plutôt cette page dans <b>Chrome</b> ou <b>Edge</b>' + (mac ? ' (ou Safari)' : '') + '.</p>' : '') +
+      (saf ? '<ol class="vz-steps"><li>Clique sur <b>« Ouvrir Vezoria »</b> ci-dessous.</li><li>Menu <b>Fichier</b> → <b>« Ajouter au Dock »</b>.</li></ol>'
+           : '<ol class="vz-steps"><li>Clique sur <b>« Ouvrir Vezoria »</b> ci-dessous.</li><li>Clique sur l’icône <b>« Installer »</b> au bout de la barre d’adresse, ou menu <b>⋮</b> → <b>« Installer Vezoria »</b>.</li><li>Vezoria s’ouvre dans sa propre fenêtre, comme un logiciel.</li></ol>') +
+      '<a class="btn and vz-go" href="' + APP + '">💻 Ouvrir Vezoria</a><p class="vz-small">Pour garder le même carnet que sur ton téléphone : ☁️ Cloud → « Tu as déjà un code ? ». <a href="installer-vezoria-pc">Le guide complet</a></p>');
+  }
   function deskSheet(){
-    sheet('<h2>Installer Vezoria</h2><p>Vezoria s’installe sur ton téléphone. Ouvre ce site depuis ton téléphone, ou choisis :</p>' +
-      '<div class="vz-two"><a class="btn and vz-go" href="' + PLAY + '">🤖 Android · Play Store</a><a class="btn and vz-go" href="#" data-ios>🍏 iPhone · comment faire</a></div>');
+    sheet('<h2>Installer Vezoria</h2><p>Vezoria marche sur ordinateur, sur Android et sur iPhone. Choisis :</p>' +
+      '<div class="vz-two"><a class="btn and vz-go" href="#" data-pc>💻 Sur cet ordinateur</a><a class="btn and vz-go" href="' + PLAY + '">🤖 Android · Play Store</a><a class="btn and vz-go" href="#" data-ios>🍏 iPhone · comment faire</a></div>');
     var b = document.querySelector('#vz-sheet [data-ios]'); if(b) b.onclick = function(e){ e.preventDefault(); iosSheet(); };
+    var c = document.querySelector('#vz-sheet [data-pc]'); if(c) c.onclick = function(e){ e.preventDefault(); pcSheet(); };
   }
   function install(e){ if(e) e.preventDefault(); if(and) location.href = PLAY; else if(ios) iosSheet(); else deskSheet(); }
 
   // bouton « Installer » en haut à droite : décide au moment du toucher
   document.querySelectorAll('[data-store]').forEach(function(x){ x.addEventListener('click', install); });
   // boutons Android / iPhone des pages
-  document.querySelectorAll('.cta').forEach(function(c){ var a = c.querySelector('.btn.and'), i = c.querySelector('.btn.ios'); if(!a || !i) return;
+  // boutons Android / iPhone / ordinateur des pages : sur un téléphone, seulement le sien ; sur ordinateur, « PC · Mac » en premier
+  document.querySelectorAll('.cta').forEach(function(c){ var a = c.querySelector('.btn.and'), i = c.querySelector('.btn.ios'), p = c.querySelector('.btn.pc'); if(!a || !i) return;
     i.addEventListener('click', function(e){ e.preventDefault(); iosSheet(); });
-    if(ios){ c.insertBefore(i, a); i.className = 'btn and'; a.className = 'btn ios'; a.style.display = 'none'; }
-    else if(and){ i.style.display = 'none'; } });
+    if(p) p.addEventListener('click', function(e){ e.preventDefault(); pcSheet(); });
+    if(ios){ c.insertBefore(i, a); i.className = 'btn and'; a.className = 'btn ios'; a.style.display = 'none'; if(p) p.style.display = 'none'; }
+    else if(and){ i.style.display = 'none'; if(p) p.style.display = 'none'; }
+    else if(p){ c.insertBefore(p, a); p.className = 'btn and pc'; a.className = 'btn ios'; } });
 } catch(err){} })();
 
 /* Navigation flottante : ← Retour · Menu · ↑ Haut de page */
