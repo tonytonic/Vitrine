@@ -270,11 +270,56 @@ feat = [('🗓️', 'Le programme jour par jour', 'Étapes, hôtels, trajets et 
         ('👀', 'La famille suit le voyage', 'Un simple lien, sans installer d’appli. Tu choisis ce qui est publié.'),
         ('🔒', 'Gratuit, sans pub, sans compte', 'Aucun pistage. Tes voyages partagés ne sont visibles que par tes invités.')]
 fhtml = ''.join(f'<div class="feat"><i>{a}</i><b>{E(b)}</b><span>{E(c)}</span></div>' for a, b, c in feat)
+
+# ── encart saisonnier « Vacances de Noël · marchés de Noël » (accueil) ──
+#    Après les fêtes : mettre NOEL = False puis relancer  python3 outils/generer.py  (l’encart disparaît).
+NOEL = True
+NOEL_DEST = [('alsace', '🏰', 'Strasbourg et Colmar : la « capitale de Noël », vin chaud, bredele et villages illuminés.'),
+             ('baviere', '🥨', 'Munich, et Nuremberg pas loin : chalets en bois, pain d’épices et chopes de Glühwein.'),
+             ('salzbourg-tyrol', '🎻', 'Le marché devant la cathédrale de Salzbourg, Innsbruck et les Alpes sous la neige.'),
+             ('vienne-budapest', '⛸️', 'Marché et patinoire devant l’hôtel de ville de Vienne, puis Budapest et ses bains chauds.'),
+             ('prague', '🎄', 'La place de la Vieille-Ville, son grand sapin et les trdelník tout chauds.'),
+             ('bruxelles-bruges', '🧇', 'La Grand-Place illuminée, Plaisirs d’hiver et les canaux de Bruges.'),
+             ('cracovie', '⭐', 'Le Rynek, les crèches szopki et l’un des budgets les plus doux d’Europe.'),
+             ('pays-baltes', '❄️', 'Riga et Tallinn : vieilles villes médiévales et marchés sous la neige.'),
+             ('londres', '🎡', 'Winter Wonderland à Hyde Park, vitrines et patinoires dans toute la ville.'),
+             ('laponie-finlandaise', '🦌', 'Rovaniemi, le village du Père Noël, les rennes et peut-être des aurores boréales.')]
+NOEL_CSS = ('.noel{position:relative;overflow:hidden;color:#fff;border-radius:24px;padding:24px 20px;'
+            'background:radial-gradient(circle at 12% 18%,rgba(255,255,255,.22) 0 2px,transparent 3px) 0 0/46px 46px,'
+            'radial-gradient(circle at 70% 60%,rgba(255,255,255,.16) 0 1.5px,transparent 2.5px) 0 0/34px 34px,'
+            'linear-gradient(140deg,#2A1238 0%,#5a1436 55%,#8c1c2f 100%);box-shadow:0 10px 28px rgba(60,10,30,.25)}'
+            '.noel h2{color:#fff;margin:.2em 0 .3em}.noel .kick{color:#f6c56f;opacity:1}'
+            '.noel>p{max-width:760px;opacity:.95}.noel .nl-d{display:inline-block;background:rgba(255,255,255,.14);'
+            'border:1.5px solid rgba(246,197,111,.6);border-radius:12px;padding:8px 12px;font-weight:600;margin:4px 0 14px}'
+            '.noel .cards{margin:6px 0 16px}.noel .pc{color:var(--ink)}.noel .pc .stamp{font-size:1rem;border-color:#c9a24a}'
+            '.noel .pc small.nl-m{display:block;margin-top:6px;color:var(--navy2);font-weight:600;font-size:.8rem}'
+            '.noel ul{margin:0 0 14px;padding-left:1.2em;max-width:760px}.noel li{margin:4px 0}'
+            '.noel .chips{margin:6px 0 0}.noel .chip{background:rgba(255,255,255,.95)}')
+def noel_card(slug, emo, txt):
+    x = DST.BY['voyage-' + slug]
+    meta = f'{x[8][0]} à {x[8][1]} jours · ≈ {DST.r10(x[7])} €/jour · {x[12][11]} °C en déc.'
+    return (f'<a class="pc" href="voyage-{slug}"><span class="pc-cat">Marchés de Noël</span><b>{E(x[0])}</b>'
+            f'<small>{E(txt)}</small><small class="nl-m">{E(meta)}</small><i class="stamp">{emo}</i></a>')
+noel = '' if not NOEL else (
+    f'<style>{NOEL_CSS}</style><section class="block noel" id="noel"><p class="kick">✨ Spécial vacances de Noël</p>'
+    '<h2>Cap sur les marchés de Noël</h2>'
+    '<p>Vin chaud, chalets illuminés, sapins géants et pain d’épices : les plus beaux marchés de Noël d’Europe, à quelques heures de train ou d’avion. '
+    'Prépare l’escapade à plusieurs dans Vezoria : trajets, hôtel, budget partagé et valise grand froid.</p>'
+    '<span class="nl-d">🗓️ Vacances de Noël : du samedi 19 décembre 2026 au lundi 4 janvier 2027 (zones A, B et C)</span>'
+    '<div class="cards">' + ''.join(noel_card(*d) for d in NOEL_DEST) + '</div>'
+    '<ul><li><b>Les marchés ouvrent en général fin novembre</b> et beaucoup ferment le 23 ou le 24 décembre (Alsace, Allemagne) : '
+    'pour en profiter pendant les vacances, vise le premier week-end, les 19 et 20 décembre.</li>'
+    '<li><b>Après Noël</b>, Prague, Budapest ou la Laponie restent de belles options : vérifie les dates d’ouverture du marché avant de réserver.</li>'
+    '<li><b>Réserve tôt</b> : trains et hôtels se remplissent vite les week-ends de décembre, surtout à Strasbourg.</li></ul>'
+    '<div class="chips"><a class="chip" href="ou-partir-en-decembre">📅 Où partir en décembre</a>'
+    '<a class="chip" href="week-end-entre-amis">👯 Un week-end entre amis</a>'
+    '<a class="chip" href="valise-week-end">🧳 La valise du week-end</a>'
+    '<a class="chip" href="partager-depenses-voyage">💸 Partager les dépenses</a></div></section>')
 home = head('Vezoria · carnet de voyage partagé, gratuit et sans pub', 'Vezoria : le carnet de voyage qu’on remplit à plusieurs. Programme jour par jour, réservations, budget partagé, checklist et souvenirs. Gratuit, sans pub, sans compte.', '', 'website', [APP_LD, ORG_LD, SITE_LD, faq_ld(FAQ_HOME)]) + topbar() + f'''
 <div class="hero home"><div class="wrap hgrid"><div><p class="kick">Carnet de voyage partagé</p><h1>Le carnet de voyage qu’on remplit <em>à plusieurs</em></h1>
 <p class="lead">Programme jour par jour, réservations, budget partagé, valise, souvenirs : tout le voyage dans une seule appli, pour tous ceux qui partent avec toi.</p>{cta(home=True)}</div>
 <div class="hph">{phone("mes-voyages", "La liste des voyages dans Vezoria")}{phone("accueil", "L’écran principal d’un voyage")}</div></div><div class="air"></div></div>
-<main class="wrap"><section class="block"><h2>Tout le voyage, au même endroit</h2><div class="feats">{fhtml}</div></section>
+<main class="wrap">{noel}<section class="block"><h2>Tout le voyage, au même endroit</h2><div class="feats">{fhtml}</div></section>
 <section class="block three"><div><span class="ph3">🧳</span><b>Avant</b><p>On prépare ensemble : étapes, hôtels, trajets, budget, valise.</p></div><div><span class="ph3">📍</span><b>Pendant</b><p>Les billets en un geste, les dépenses notées, la journée racontée.</p></div><div><span class="ph3">🗺️</span><b>Après</b><p>Les souvenirs, le bilan, le film et l’album du voyage.</p></div></section>
 <section class="block"><h2>Où partir ?</h2><p>{len(DST.D)} destinations avec la meilleure période, la météo mois par mois, la durée idéale, le budget et les formalités.</p>
 {acc('Où partir selon le mois', '<div class="chips">' + ''.join(f'<a class="chip" href="{q["slug"]}">{E(DST.MOIS[i].capitalize())} </a>' for i, q in enumerate(MPAGES)) + '</div>', 12, '📅')}
