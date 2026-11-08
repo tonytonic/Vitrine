@@ -51,10 +51,12 @@ TP_LINK = {
 #   Saily https://saily.tpm.lv/e7JLF3BY · KKday https://kkday.tpm.lv/lEeb6k51
 # 🏢 L’ÉDITEUR PROFESSIONNEL, affiché quand AFFIL = True (la loi LCEN demande ces informations à un pro)
 ENTREPRISE = 'CELMAR APPS'
-SIRET   = ''              # vide = « en cours d’attribution » ; à remplir dès réception
+SIRET   = '132 459 298 00015'   # vide = « en cours d’attribution »
+SIREN   = '132 459 298'
+RCS     = 'RCS Quimper 132 459 298 (depuis le 5 novembre 2026) — code APE 6201Z'
 ADRESSE = '13 rue du 19 Mars 1962, 29570 Camaret-sur-Mer, France'   # ⚠️ OBLIGATOIRE pour un pro : adresse postale (ou adresse de domiciliation)
 TEL     = '06 33 01 40 75'   # ⚠️ OBLIGATOIRE pour un pro : numéro de téléphone
-MAJ = '1er novembre 2026' if AFFIL else '21 octobre 2026'
+MAJ = '8 novembre 2026' if AFFIL else '21 octobre 2026'
 if AFFIL and not (ADRESSE and TEL): print('⚠️  AFFIL = True : remplis ADRESSE et TEL dans outils/generer.py (mentions légales)')
 from urllib.parse import quote
 def tp_wrap(k, url):
@@ -349,7 +351,7 @@ write('404.html', head('Page introuvable · Vezoria', 'Cette page n’existe pas
 
 # ── mentions légales et confidentialité DU SITE ──
 if AFFIL:
-    ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par une entreprise individuelle (micro-entreprise) :</p><ul><li><b>Entrepreneur :</b> Anthony Chauvel, entrepreneur individuel (EI)</li><li><b>Nom commercial :</b> {E(ENTREPRISE)}</li><li><b>SIRET :</b> {E(SIRET) if SIRET else "en cours d’attribution"}</li>{f"<li><b>Adresse :</b> {E(ADRESSE)}</li>" if ADRESSE else ""}{f"<li><b>Téléphone :</b> {E(TEL)}</li>" if TEL else ""}<li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul></section>'''
+    ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par une entreprise individuelle (micro-entreprise) :</p><ul><li><b>Entrepreneur :</b> Anthony Chauvel, entrepreneur individuel (EI)</li><li><b>Nom commercial :</b> {E(ENTREPRISE)}</li>{f"<li><b>SIREN :</b> {E(SIREN)} — <b>SIRET :</b> {E(SIRET)}</li><li><b>Immatriculation :</b> {E(RCS)}</li>" if SIRET else "<li><b>SIRET :</b> en cours d’attribution</li>"}{f"<li><b>Adresse :</b> {E(ADRESSE)}</li>" if ADRESSE else ""}{f"<li><b>Téléphone :</b> {E(TEL)}</li>" if TEL else ""}<li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul></section>'''
     AFFIL_RESP = 'Certains liens vers des sites de réservation sont des <b>liens partenaires</b> (affiliation, via la plateforme Travelpayouts) : si tu réserves après avoir touché l’un d’eux, l’éditeur peut percevoir une commission, <b>sans aucun surcoût pour toi</b>. Ces liens sont signalés par la mention « liens partenaires ». Ils ne changent ni le contenu des guides ni le choix des sites cités, qui restent indépendants.'
 else:
     ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par un particulier, à titre personnel et non professionnel :</p><ul><li><b>Nom :</b> Anthony Chauvel</li><li><b>Qualité :</b> personne physique, éditeur non professionnel</li><li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul><p>Conformément à l’article 6-III-2 de la LCEN, l’éditeur non professionnel peut ne tenir à disposition du public que les éléments permettant de le contacter, son identité complète étant communiquée à l’hébergeur.</p></section>'''
@@ -376,7 +378,7 @@ write('mentions-legales.html', legal_page('mentions-legales', 'Mentions légales
 write('confidentialite.html', legal_page('confidentialite', 'Politique de confidentialité du site Vezoria', 'Le site Vezoria ne dépose aucun cookie et compte ses visites avec un compteur anonyme de Cloudflare, sans suivi. Seule l’adresse e-mail laissée pour être prévenu du lancement est conservée.', 'Politique de confidentialité', f"""
 <section class="block"><p>Cette politique concerne le présent site d’information. L’application Vezoria a sa propre <a href="{APP_PRIV}" rel="noopener">politique de confidentialité</a>.</p>
 <div class="feats"><div class="feat"><i>🍪</i><b>Aucun cookie</b><span>Ni cookie, ni traceur, ni stockage dans ton navigateur.</span></div><div class="feat"><i>📊</i><b>Statistiques anonymes</b><span>Un simple compteur de visites Cloudflare, sans cookie ni suivi. Pas de Google Analytics.</span></div><div class="feat"><i>📢</i><b>Aucune publicité</b><span>Aucune régie, aucun réseau social intégré.</span></div><div class="feat"><i>✉️</i><b>Un seul formulaire, facultatif</b><span>Ton e-mail, seulement si tu veux être prévenu·e du lancement.</span></div></div></section>
-<section class="block"><h2>1. Responsable</h2><p>Anthony Chauvel, {f"entrepreneur individuel ({E(ENTREPRISE)})" if AFFIL else "éditeur non professionnel"} — <a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
+<section class="block"><h2>1. Responsable</h2><p>Anthony Chauvel, {f"entrepreneur individuel ({E(ENTREPRISE)}{', SIRET ' + E(SIRET) if SIRET else ''})" if AFFIL else "éditeur non professionnel"} — <a href="mailto:{CONTACT}">{CONTACT}</a>.</p></section>
 <section class="block"><h2>2. Ce que le Site ne fait pas</h2><ul><li>Il ne dépose <b>aucun cookie</b> et n’utilise <b>aucun stockage</b> dans ton navigateur.</li><li>Il n’utilise <b>ni publicité, ni Google Analytics, ni réseau social</b> : seulement le compteur de visites anonyme de Cloudflare (article 5).</li><li>Polices, images et scripts sont hébergés sur le Site lui-même ; le seul script extérieur est ce petit compteur (static.cloudflareinsights.com).</li></ul></section>
 <section class="block" id="liste"><h2>3. La liste « Me prévenir du lancement »</h2>
 <ul><li><b>Ce qui est enregistré :</b> ton adresse e-mail, la date d’inscription, la page depuis laquelle tu t’es inscrit·e et, si tu le choisis, ta façon de voyager (entre amis, en famille…). Une empreinte chiffrée et non réversible de ton adresse IP sert seulement à bloquer les inscriptions en rafale (anti-robots) : elle est effacée automatiquement une heure après ton inscription (au prochain passage du Site) et ne permet pas de te retrouver.</li>
