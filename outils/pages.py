@@ -44,7 +44,7 @@ page(slug='partager-depenses-voyage',
 
 page(slug='carnet-de-voyage-partage',
   cat='Découvrir', title='Carnet de voyage partagé : l’appli gratuite à plusieurs',
-  desc='Un carnet de voyage numérique que l’on remplit à plusieurs : programme, réservations, budget, photos et souvenirs. Gratuit, sans pub, sans compte.',
+  desc='Un carnet de voyage numérique que l’on remplit à plusieurs : programme, réservations, budget, photos et souvenirs. Gratuit, sans pub.',
   h1='Un carnet de voyage qu’on remplit à plusieurs',
   lead='Le carnet de voyage, c’est l’endroit où tout le voyage tient : avant, pendant et après. Version numérique et partagée, il devient le meilleur compagnon de route du groupe.',
   sections=[
@@ -206,13 +206,13 @@ page(slug='souvenirs-voyage-album',
   rel=['carnet-de-voyage-partage','suivre-voyage-famille','pendant-le-voyage'])
 
 page(slug='application-voyage-gratuite-sans-pub',
-  cat='Découvrir', title='Une appli de voyage gratuite, sans pub et sans compte',
-  desc='Vezoria est une appli de voyage gratuite, sans publicité, sans compte ni pistage. Voyages partagés protégés, fonctionne hors ligne, en 14 langues.',
-  h1='Une appli de voyage gratuite, sans pub, sans compte',
+  cat='Découvrir', title='Une appli de voyage gratuite et sans pub',
+  desc='Vezoria est une appli de voyage gratuite, sans publicité ni pistage, utilisable sans compte sur votre téléphone. Voyages partagés protégés, fonctionne hors ligne, en 14 langues.',
+  h1='Une appli de voyage gratuite, sans pub',
   lead='Beaucoup d’applis de voyage vivent de la publicité et de vos données. Vezoria a fait un autre choix.',
   sections=[
    ('Gratuite, vraiment', '<p>Toutes les fonctions sont gratuites, sans publicité. Le Cloud Vezoria garde gratuitement jusqu’à <b>1 500 photos</b> par carnet ; sans cloud, aucune limite. Pour plus de place en ligne, deux formules arrivent <b>prochainement</b> : <b>Plus</b> (≈ 10 000 photos) et <b>Max</b> (≈ 100 000 photos). Elles ne débloquent aucune fonction : seulement de la place pour les photos.</p>'),
-   ('Sans compte', '<p>Pas d’adresse e-mail, pas de mot de passe. Vous donnez un prénom et choisissez une couleur : c’est tout.</p>'),
+   ('Sans compte pour commencer', '<p>Vous donnez un prénom et choisissez une couleur : c’est tout, et le carnet fonctionne sur votre téléphone. Une adresse e-mail (sans mot de passe) est demandée seulement pour mettre le carnet en ligne : le partager, le retrouver sur un autre appareil.</p>'),
    ('Vos voyages restent les vôtres', '<ul><li>Pas de pistage de votre utilisation.</li><li>Un voyage partagé n’est lisible que par ceux qui ont reçu son invitation.</li><li>Le Cloud Vezoria est facultatif : sans lui, tout reste sur votre téléphone.</li><li>Le mode « lecture seule » évite les suppressions par erreur.</li></ul>'),
    ('Hors ligne et en 14 langues', '<p>Le programme, les billets et les papiers restent consultables sans réseau. L’appli parle 14 langues, pratique pour les groupes d’amis venus de plusieurs pays.</p>'),
   ],
@@ -237,7 +237,7 @@ page(slug='idees-de-voyage',
   rel=['organiser-voyage-entre-amis','itineraire-voyage-jour-par-jour','budget-voyage'])
 
 FAQ_HOME = [
- ('Qu’est-ce que Vezoria ?','Un carnet de voyage que l’on remplit à plusieurs : programme jour par jour, réservations, budget partagé, checklist, souvenirs. Gratuit, sans publicité et sans compte.'),
+ ('Qu’est-ce que Vezoria ?','Un carnet de voyage que l’on remplit à plusieurs : programme jour par jour, réservations, budget partagé, checklist, souvenirs. Gratuit et sans publicité.'),
  ('Vezoria est-elle gratuite ?','Oui : toutes les fonctions sont gratuites, sans publicité, avec 1 500 photos en ligne par carnet. Deux formules pour plus de place photos, Plus et Max, arrivent prochainement.'),
  ('Sur quels appareils ?','Sur Android depuis le Play Store, sur iPhone en l’ajoutant à l’écran d’accueil depuis Safari, et sur ordinateur (PC ou Mac) depuis le navigateur.'),
  ('Ma famille peut-elle suivre mon voyage ?','Oui, depuis un simple lien, sans installer d’appli. Elle voit seulement les étapes et les photos que vous publiez.'),

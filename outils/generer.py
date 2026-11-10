@@ -191,7 +191,7 @@ def crumbs_ld(p):
 
 APP_LD = {'@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': 'Vezoria', 'operatingSystem': 'Android, iOS, Windows, macOS',
           'applicationCategory': 'TravelApplication', 'inLanguage': 'fr', 'url': SITE + '/',
-          'description': 'Carnet de voyage partagé : programme jour par jour, réservations, budget partagé, checklist, souvenirs. Gratuit, sans publicité, sans compte.',
+          'description': 'Carnet de voyage partagé : programme jour par jour, réservations, budget partagé, checklist, souvenirs. Gratuit, sans publicité.',
           'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'image': SITE + '/assets/img/og.jpg', **({} if PRELAUNCH else {'downloadUrl': PLAY})}
 ORG_LD = {'@context': 'https://schema.org', '@type': 'Organization', 'name': 'Vezoria', 'url': SITE + '/', 'logo': SITE + '/assets/img/logo-vezoria.png', 'email': CONTACT}
 SITE_LD = {'@context': 'https://schema.org', '@type': 'WebSite', 'name': 'Vezoria', 'alternateName': 'Vezoria, carnet de voyage partagé', 'url': SITE + '/', 'inLanguage': 'fr'}
@@ -282,7 +282,7 @@ feat = [('🗓️', 'Le programme jour par jour', 'Étapes, hôtels, trajets et 
         ('📍', 'Pendant le voyage', 'La prochaine étape, les billets, la météo, les dépenses du jour en un geste.'),
         ('📸', 'Les souvenirs', 'Photos et récits jour par jour, puis bilan, film, album et carte du monde.'),
         ('👀', 'La famille suit le voyage', 'Un simple lien, sans installer d’appli. Tu choisis ce qui est publié.'),
-        ('🔒', 'Gratuit, sans pub, sans compte', 'Aucun pistage. Tes voyages partagés ne sont visibles que par tes invités.')]
+        ('🔒', 'Gratuit, sans pub', 'Aucun pistage. Tes voyages partagés ne sont visibles que par tes invités.')]
 fhtml = ''.join(f'<div class="feat"><i>{a}</i><b>{E(b)}</b><span>{E(c)}</span></div>' for a, b, c in feat)
 
 # ── encart saisonnier « Vacances de Noël · marchés de Noël » (accueil) ──
@@ -329,7 +329,7 @@ noel = '' if not NOEL else (
     '<a class="chip" href="week-end-entre-amis">👯 Un week-end entre amis</a>'
     '<a class="chip" href="valise-week-end">🧳 La valise du week-end</a>'
     '<a class="chip" href="partager-depenses-voyage">💸 Partager les dépenses</a></div></section>')
-home = head('Vezoria · carnet de voyage partagé, gratuit et sans pub', 'Vezoria : le carnet de voyage qu’on remplit à plusieurs. Programme jour par jour, réservations, budget partagé, checklist et souvenirs. Gratuit, sans pub, sans compte.', '', 'website', [APP_LD, ORG_LD, SITE_LD, faq_ld(FAQ_HOME)]) + topbar() + f'''
+home = head('Vezoria · carnet de voyage partagé, gratuit et sans pub', 'Vezoria : le carnet de voyage qu’on remplit à plusieurs. Programme jour par jour, réservations, budget partagé, checklist et souvenirs. Gratuit, sans pub.', '', 'website', [APP_LD, ORG_LD, SITE_LD, faq_ld(FAQ_HOME)]) + topbar() + f'''
 <div class="hero home"><div class="wrap hgrid"><div><p class="kick">Carnet de voyage partagé</p><h1>Le carnet de voyage qu’on remplit <em>à plusieurs</em></h1>
 <p class="lead">Programme jour par jour, réservations, budget partagé, valise, souvenirs : tout le voyage dans une seule appli, pour tous ceux qui partent avec toi.</p>{cta(home=True)}</div>
 <div class="hph">{phone("mes-voyages", "La liste des voyages dans Vezoria")}{phone("accueil", "L’écran principal d’un voyage")}</div></div><div class="air"></div></div>
