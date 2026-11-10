@@ -7,7 +7,7 @@ Ce ne sont pas des écrans de l’appli : ce sont des panneaux sur la route qui 
 ## Ce qu’il y a dedans
 - `index.html` : l’accueil (présentation, 8 points forts, destinations, guides, questions fréquentes).
 - 51 guides écrits (`organiser-voyage-entre-amis.html`, `partager-depenses-voyage.html`, …) en 9 rubriques : Découvrir, Préparer, Types de voyage, Budget, Checklists, Partager, Voyager, Se souvenir, L’appli. Avec de vraies captures de l’appli.
-- 176 pages destinations (`voyage-japon.html`, …), 12 pages « Où partir en … » et 11 pages par envie (`destinations-plage.html`, …) : générées depuis `outils/dests.json` (mêmes données que l’appli).
+- 175 pages destinations (`voyage-japon.html`, …), 12 pages « Où partir en … » et 11 pages par envie (`destinations-plage.html`, …) : générées depuis `outils/dests.json` (mêmes données que l’appli).
 - `adaptateur-prise-electrique-pays.html` : le type de prise pays par pays.
 - `guides.html` et `destinations.html` : les sommaires.
 - `guide-utilisateur.html` + `assets/vezoria-guide-utilisateur.pdf` : le mode d’emploi complet à télécharger.
