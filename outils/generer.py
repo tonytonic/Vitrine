@@ -56,7 +56,7 @@ SIREN   = '132 459 298'
 RCS     = 'RCS Quimper 132 459 298 (depuis le 5 novembre 2026) — code APE 6201Z'
 ADRESSE = '13 rue du 19 Mars 1962, 29570 Camaret-sur-Mer, France'   # ⚠️ OBLIGATOIRE pour un pro : adresse postale (ou adresse de domiciliation)
 TEL     = '06 33 01 40 75'   # ⚠️ OBLIGATOIRE pour un pro : numéro de téléphone
-MAJ = '8 novembre 2026' if AFFIL else '21 octobre 2026'
+MAJ = '10 novembre 2026' if AFFIL else '21 octobre 2026'
 if AFFIL and not (ADRESSE and TEL): print('⚠️  AFFIL = True : remplis ADRESSE et TEL dans outils/generer.py (mentions légales)')
 from urllib.parse import quote
 def tp_wrap(k, url):
@@ -94,10 +94,22 @@ def bk_box(slug):
     if slug not in GUIDE_BK: return ''
     k, what, why = GUIDE_BK[slug]
     return f'<p class="bk-l">🔗 Bon à savoir : {bk_a(k, what)} {E(why)}.{BK_NOTE}</p>'
-def bk_dest(x):
+# 🎟️ VIATOR — partenaire DIRECT (pas Travelpayouts), même compte que l’appli. Il prend la place de Tiqets pour les activités.
+#    campaign = « vitrine-<page> » : dans le tableau de bord Viator, la vitrine se distingue de l’appli (« web » / « play »).
+#    Vide = Tiqets comme avant.
+VIATOR_PID, VIATOR_MCID = 'P00330602', '42383'
+def viator_url(city, slug):
+    u = 'https://www.viator.com/fr-FR/searchResults/all?text=' + quote(city)
+    if AFFIL and VIATOR_PID: u += f'&pid={VIATOR_PID}&mcid={VIATOR_MCID}&medium=link&campaign=' + quote(('vitrine-' + slug)[:200])
+    return u
+def viator_a(city, slug):
+    rel = 'sponsored noopener' if AFFIL else 'noopener'
+    return f'<a href="{E(viator_url(city, slug))}" target="_blank" rel="{rel}">{E("activités et visites à " + city + " (Viator)")}</a>'
+def bk_dest(x, slug=''):
     nom, it = x[0], x[9]
     city = it[0][0] if it else nom
-    return f'<p class="bk-l">🔗 Pour réserver : {bk_a("kiwi", "les vols (Kiwi.com)", city)} · {bk_a("booking", "un hébergement à " + city, city)} · {bk_a("tiqets", "musées et visites (Tiqets)", city)}{BK_NOTE}</p>'
+    act = viator_a(city, slug) if VIATOR_PID else bk_a("tiqets", "musées et visites (Tiqets)", city)
+    return f'<p class="bk-l">🔗 Pour réserver : {bk_a("kiwi", "les vols (Kiwi.com)", city)} · {bk_a("booking", "un hébergement à " + city, city)} · {act}{BK_NOTE}</p>'
 ROOT   = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 E = html.escape
 BY = {p['slug']: p for p in PAGES}
@@ -211,7 +223,7 @@ for p in DPAGES:
     x = DST.BY[p['slug']]
     body = ''.join(f'<section class="block"><h2>{E(h)}</h2>{t}</section>' + (cta('Préparer ce voyage à plusieurs') if i == 2 else '') for i, (h, t) in enumerate(p['sections']))
     body += f'<section class="block withph">{phone("idees", "Les idées de destinations dans Vezoria")}<div class="txt"><h2>Partir à plusieurs ?</h2><p>Programme jour par jour, réservations, comptes partagés, valise et souvenirs : prépare {E(x[0])} avec tes compagnons dans un seul carnet.</p><ul><li><a href="organiser-voyage-entre-amis">Organiser un voyage entre amis</a></li><li><a href="partager-depenses-voyage">Partager les dépenses</a></li><li><a href="checklist-valise-voyage">La checklist valise</a></li></ul></div></section>'
-    body += bk_dest(x)
+    body += bk_dest(x, p['slug'])
     body += faq_html(p['faq'])
     links = ''.join(f'<a class="chip" href="{DST.mo_slug(m)}">Où partir en {DST.MOIS[m-1]}</a>' for m in sorted(p['best'])) + ''.join(f'<a class="chip" href="{DST.th_slug(t)}">{E(DST.THEMES[t][0])}</a>' for t in p['tags'] if t in DST.THEMES)
     body += f'<section class="block"><h2>Autres idées</h2><div class="cards">{"".join(card(BY[DST.dslug(y)]) for y in p["sim"])}</div><div class="chips">{links}</div></section>'
@@ -352,7 +364,7 @@ write('404.html', head('Page introuvable · Vezoria', 'Cette page n’existe pas
 # ── mentions légales et confidentialité DU SITE ──
 if AFFIL:
     ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par une entreprise individuelle (micro-entreprise) :</p><ul><li><b>Entrepreneur :</b> Anthony Chauvel, entrepreneur individuel (EI)</li><li><b>Nom commercial :</b> {E(ENTREPRISE)}</li>{f"<li><b>SIREN :</b> {E(SIREN)} — <b>SIRET :</b> {E(SIRET)}</li><li><b>Immatriculation :</b> {E(RCS)}</li>" if SIRET else "<li><b>SIRET :</b> en cours d’attribution</li>"}{f"<li><b>Adresse :</b> {E(ADRESSE)}</li>" if ADRESSE else ""}{f"<li><b>Téléphone :</b> {E(TEL)}</li>" if TEL else ""}<li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul></section>'''
-    AFFIL_RESP = 'Certains liens vers des sites de réservation sont des <b>liens partenaires</b> (affiliation, via la plateforme Travelpayouts) : si tu réserves après avoir touché l’un d’eux, l’éditeur peut percevoir une commission, <b>sans aucun surcoût pour toi</b>. Ces liens sont signalés par la mention « liens partenaires ». Ils ne changent ni le contenu des guides ni le choix des sites cités, qui restent indépendants.'
+    AFFIL_RESP = 'Certains liens vers des sites de réservation sont des <b>liens partenaires</b> (affiliation, via la plateforme Travelpayouts ou directement avec Viator pour les activités) : si tu réserves après avoir touché l’un d’eux, l’éditeur peut percevoir une commission, <b>sans aucun surcoût pour toi</b>. Ces liens sont signalés par la mention « liens partenaires ». Ils ne changent ni le contenu des guides ni le choix des sites cités, qui restent indépendants.'
 else:
     ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par un particulier, à titre personnel et non professionnel :</p><ul><li><b>Nom :</b> Anthony Chauvel</li><li><b>Qualité :</b> personne physique, éditeur non professionnel</li><li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul><p>Conformément à l’article 6-III-2 de la LCEN, l’éditeur non professionnel peut ne tenir à disposition du public que les éléments permettant de le contacter, son identité complète étant communiquée à l’hébergeur.</p></section>'''
     AFFIL_RESP = 'Le Site est indépendant : il n’est ni affilié, ni partenaire, ni rémunéré par les sites mentionnés.'
@@ -389,7 +401,7 @@ write('confidentialite.html', legal_page('confidentialite', 'Politique de confid
 <li><b>Te désinscrire :</b> écris à <a href="mailto:{CONTACT}">{CONTACT}</a> ; ton adresse est supprimée. L’e-mail de lancement contiendra aussi un lien de désinscription.</li></ul></section>
 <section class="block"><h2>4. Le petit script du Site</h2><p>Un script affiche {"les boutons Retour, Menu et Haut de page, et envoie le formulaire « Me prévenir » sans recharger la page (et, après le lancement, le bon bouton d’installation selon ton appareil)" if PRELAUNCH else "le bon bouton d’installation (iPhone, Android ou ordinateur) et les boutons Retour, Menu et Haut de page"}. Il ne lit ni n’enregistre rien d’autre.</p></section>
 <section class="block"><h2>5. L’hébergeur</h2><p>Comme tout hébergeur, Cloudflare (Cloudflare Pages) reçoit des données techniques au moment où une page est demandée (notamment l’adresse IP), pour acheminer la page et assurer la sécurité du service. Ces données sont traitées par Cloudflare selon sa propre politique de confidentialité ; l’éditeur n’y a pas accès. Cloudflare peut traiter des données hors de l’Union européenne, dans le cadre des clauses contractuelles types et du cadre de protection des données UE–États-Unis. <b>Mesure d’audience</b> : le Site utilise Cloudflare Web Analytics. Un petit script compte les pages vues et mesure leur vitesse d’affichage, <b>sans cookie, sans identifiant et sans suivi d’un site à l’autre</b> ; l’éditeur ne voit que des totaux (pages vues, pays, type d’appareil). Ce type de mesure anonyme ne demande pas ton consentement.</p></section>
-<section class="block"><h2>6. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria, un site officiel ou un site de réservation (vols, hébergement, activités, eSIM, assurance…), tu quittes le Site : la politique de confidentialité de ce site s’applique alors. {"" if not AFFIL else "Certains de ces liens sont des liens partenaires (affiliation) : ils passent d’abord par la plateforme Travelpayouts (Go Travel Un Limited, Hong Kong), puis t’amènent chez le partenaire. Une fois que tu as quitté le Site, Travelpayouts et le partenaire peuvent déposer leurs propres cookies et recevoir des données techniques (adresse IP, navigateur, page d’origine), éventuellement hors de l’Union européenne, pour savoir qu’une réservation vient de Vezoria ; leurs politiques de confidentialité s’appliquent alors. L’éditeur peut percevoir une commission, sans surcoût pour toi. Le Site lui-même ne dépose aucun cookie et ne transmet rien à ces sites."}</p></section>
+<section class="block"><h2>6. Liens vers d’autres sites</h2><p>En touchant un lien vers Google Play, l’application Vezoria, un site officiel ou un site de réservation (vols, hébergement, activités, eSIM, assurance…), tu quittes le Site : la politique de confidentialité de ce site s’applique alors. {"" if not AFFIL else "Certains de ces liens sont des liens partenaires (affiliation) : ils passent d’abord par la plateforme Travelpayouts (Go Travel Un Limited, Hong Kong), puis t’amènent chez le partenaire ; les liens vers Viator (activités et visites, groupe Tripadvisor) mènent directement sur viator.com avec le code partenaire de l’éditeur. Une fois que tu as quitté le Site, Travelpayouts et le partenaire peuvent déposer leurs propres cookies et recevoir des données techniques (adresse IP, navigateur, page d’origine), éventuellement hors de l’Union européenne, pour savoir qu’une réservation vient de Vezoria ; leurs politiques de confidentialité s’appliquent alors. L’éditeur peut percevoir une commission, sans surcoût pour toi. Le Site lui-même ne dépose aucun cookie et ne transmet rien à ces sites."}</p></section>
 <section class="block"><h2>7. Tes droits</h2><p>Tu peux accéder à ton adresse, la faire corriger ou effacer, et retirer ton consentement : <a href="mailto:{CONTACT}">{CONTACT}</a>. Tu peux aussi adresser une réclamation à la CNIL (cnil.fr).</p></section>"""))
 
 # page « merci » (après le formulaire), non référencée
