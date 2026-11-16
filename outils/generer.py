@@ -11,10 +11,14 @@ import destinations as DST
 SITE   = 'https://vezoria.fr'                       # ← l'adresse du site (sans / à la fin)
 # 🚀 AVANT LE LANCEMENT : boutons d'installation masqués, remplacés par l'annonce du lancement.
 #    Le jour J : mettre PRELAUNCH = False puis relancer  python3 outils/generer.py
-PRELAUNCH = True
+PRELAUNCH = False
 LAUNCH    = 'novembre 2026'
 APP    = 'https://vezoria.pages.dev/'                # l'appli (iPhone : à ajouter à l'écran d'accueil)
 PLAY   = 'https://play.google.com/store/apps/details?id=fr.vezoria.app'
+# PLAY_LIVE : True le jour où Google Play publie l'appli. D'ici là, Android installe l'appli web (APP) depuis Chrome.
+PLAY_LIVE = False
+AND    = PLAY if PLAY_LIVE else APP
+AND_LBL = '🤖 Android · Play Store' if PLAY_LIVE else '🤖 Android · installer depuis Chrome'
 LEGAL  = 'mentions-legales'                          # pages du site (l’appli a les siennes)
 PRIV   = 'confidentialite'
 APP_LEGAL = 'https://vezoria.pages.dev/mentions-legales.html'
@@ -52,6 +56,7 @@ TP_LINK = {
 # 🏢 L’ÉDITEUR PROFESSIONNEL, affiché quand AFFIL = True (la loi LCEN demande ces informations à un pro)
 ENTREPRISE = 'CELMAR APPS'
 SIRET   = '132 459 298 00015'   # vide = « en cours d’attribution »
+TVA     = 'FR43 132 459 298'    # n° de TVA intracommunautaire (vide = pas affiché)
 SIREN   = '132 459 298'
 RCS     = 'RCS Quimper 132 459 298 (depuis le 5 novembre 2026) — code APE 6201Z'
 ADRESSE = '13 rue du 19 Mars 1962, 29570 Camaret-sur-Mer, France'   # ⚠️ OBLIGATOIRE pour un pro : adresse postale (ou adresse de domiciliation)
@@ -138,7 +143,7 @@ def head(title, desc, path, og_type='article', extra_ld=()):
 </head><body>'''
 
 def topbar():
-    act = f'<a class="cta-mini tz-mini" href="./#lancement">🚀 {E(LAUNCH.split()[0].capitalize())}</a>' if PRELAUNCH else f'<a class="cta-mini" href="{PLAY}" data-store>Installer</a>'
+    act = f'<a class="cta-mini tz-mini" href="./#lancement">🚀 {E(LAUNCH.split()[0].capitalize())}</a>' if PRELAUNCH else f'<a class="cta-mini" href="{AND}" data-store>Installer</a>'
     return f'''<header class="top"><a class="brand" href="./"><img src="assets/img/logo-vezoria.png" alt="" width="34" height="34"><span>Vezoria</span></a>
 <nav><a href="./#guides">Guides</a><a href="guide-utilisateur">Mode d’emploi</a>{act}</nav></header>'''
 
@@ -159,7 +164,7 @@ def teaser(home=False, src='site'):
 
 def cta(label='Installer Vezoria gratuitement', home=False):
     if PRELAUNCH: return teaser(home)
-    return f'''<div class="cta"><a class="btn and" href="{PLAY}" rel="noopener">🤖 Android · Play Store</a><a class="btn ios" href="{APP}" rel="noopener">🍏 iPhone · ouvrir dans Safari</a><a class="btn pc" href="{APP}" rel="noopener">💻 PC · Mac · ouvrir dans le navigateur</a>
+    return f'''<div class="cta"><a class="btn and" href="{AND}" rel="noopener">{AND_LBL}</a><a class="btn ios" href="{APP}" rel="noopener">🍏 iPhone · ouvrir dans Safari</a><a class="btn pc" href="{APP}" rel="noopener">💻 PC · Mac · ouvrir dans le navigateur</a>
 <small>{E(label)} · sans pub · sans compte</small></div>'''
 
 def footer():
@@ -167,7 +172,7 @@ def footer():
     dst = '<div><b>Destinations</b><a href="destinations">Toutes les destinations</a>' + ''.join(f'<a href="{DST.th_slug(t)}">{E(DST.THEMES[t][0])}</a>' for t in ['plage', 'ville', 'nature', 'romantique']) + ''.join(f'<a href="{DST.mo_slug(m)}">Où partir en {DST.MOIS[m-1]}</a>' for m in NEXT3) + '</div>'
     return f'''<footer class="foot"><div class="air"></div><div class="wrap"><div class="fcols">{dst}{cols}</div>
 <div class="fbot"><span>Vezoria · le carnet de voyage qu’on remplit à plusieurs</span><span><a href="guides">Tous les guides</a> · <a href="guide-utilisateur">Mode d’emploi</a> · <a href="{LEGAL}">Mentions légales</a> · <a href="{PRIV}">Confidentialité</a></span></div></div></footer>
-<script src="assets/site.js?v=6" defer></script></body></html>'''
+<script src="assets/site.js?v=7" defer></script></body></html>'''
 
 def slug_cat(c): return DST.slugify(c)
 ICON = {'Découvrir':'✨','Préparer':'🧭','Types de voyage':'🧳','Budget':'💸','Checklists':'✅','Partager':'👀','Voyager':'📍','Se souvenir':'📸','L’appli':'📱','Destinations':'🌍'}
@@ -192,7 +197,7 @@ def crumbs_ld(p):
 APP_LD = {'@context': 'https://schema.org', '@type': 'SoftwareApplication', 'name': 'Vezoria', 'operatingSystem': 'Android, iOS, Windows, macOS',
           'applicationCategory': 'TravelApplication', 'inLanguage': 'fr', 'url': SITE + '/',
           'description': 'Carnet de voyage partagé : programme jour par jour, réservations, budget partagé, checklist, souvenirs. Gratuit, sans publicité.',
-          'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'image': SITE + '/assets/img/og.jpg', **({} if PRELAUNCH else {'downloadUrl': PLAY})}
+          'offers': {'@type': 'Offer', 'price': '0', 'priceCurrency': 'EUR'}, 'image': SITE + '/assets/img/og.jpg', **({} if PRELAUNCH else {'downloadUrl': AND})}
 ORG_LD = {'@context': 'https://schema.org', '@type': 'Organization', 'name': 'Vezoria', 'url': SITE + '/', 'logo': SITE + '/assets/img/logo-vezoria.png', 'email': CONTACT}
 SITE_LD = {'@context': 'https://schema.org', '@type': 'WebSite', 'name': 'Vezoria', 'alternateName': 'Vezoria, carnet de voyage partagé', 'url': SITE + '/', 'inLanguage': 'fr'}
 
@@ -363,7 +368,7 @@ write('404.html', head('Page introuvable · Vezoria', 'Cette page n’existe pas
 
 # ── mentions légales et confidentialité DU SITE ──
 if AFFIL:
-    ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par une entreprise individuelle (micro-entreprise) :</p><ul><li><b>Entrepreneur :</b> Anthony Chauvel, entrepreneur individuel (EI)</li><li><b>Nom commercial :</b> {E(ENTREPRISE)}</li>{f"<li><b>SIREN :</b> {E(SIREN)} — <b>SIRET :</b> {E(SIRET)}</li><li><b>Immatriculation :</b> {E(RCS)}</li>" if SIRET else "<li><b>SIRET :</b> en cours d’attribution</li>"}{f"<li><b>Adresse :</b> {E(ADRESSE)}</li>" if ADRESSE else ""}{f"<li><b>Téléphone :</b> {E(TEL)}</li>" if TEL else ""}<li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul></section>'''
+    ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par une entreprise individuelle (micro-entreprise) :</p><ul><li><b>Entrepreneur :</b> Anthony Chauvel, entrepreneur individuel (EI)</li><li><b>Nom commercial :</b> {E(ENTREPRISE)}</li>{f"<li><b>SIREN :</b> {E(SIREN)} — <b>SIRET :</b> {E(SIRET)}</li><li><b>Immatriculation :</b> {E(RCS)}</li>" + (f"<li><b>N° de TVA intracommunautaire :</b> {E(TVA)}</li>" if TVA else "") if SIRET else "<li><b>SIRET :</b> en cours d’attribution</li>"}{f"<li><b>Adresse :</b> {E(ADRESSE)}</li>" if ADRESSE else ""}{f"<li><b>Téléphone :</b> {E(TEL)}</li>" if TEL else ""}<li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul></section>'''
     AFFIL_RESP = 'Certains liens vers des sites de réservation sont des <b>liens partenaires</b> (affiliation, via la plateforme Travelpayouts ou directement avec Viator pour les activités) : si tu réserves après avoir touché l’un d’eux, l’éditeur peut percevoir une commission, <b>sans aucun surcoût pour toi</b>. Ces liens sont signalés par la mention « liens partenaires ». Ils ne changent ni le contenu des guides ni le choix des sites cités, qui restent indépendants.'
 else:
     ED_BLOCK = f'''<section class="block"><h2>1. Éditeur</h2><p>Le Site est édité par un particulier, à titre personnel et non professionnel :</p><ul><li><b>Nom :</b> Anthony Chauvel</li><li><b>Qualité :</b> personne physique, éditeur non professionnel</li><li><b>Contact :</b> <a href="mailto:{CONTACT}">{CONTACT}</a></li></ul><p>Conformément à l’article 6-III-2 de la LCEN, l’éditeur non professionnel peut ne tenir à disposition du public que les éléments permettant de le contacter, son identité complète étant communiquée à l’hébergeur.</p></section>'''

@@ -532,10 +532,11 @@ feat('installer-vezoria-iphone', 'Installer Vezoria sur iPhone (en 30 secondes)'
   [('accueil','Vezoria une fois installée')],
   ['installer-vezoria-android','installer-vezoria-pc','carnet-de-voyage-partage'])
 
-feat('installer-vezoria-android', 'Installer Vezoria sur Android (Play Store)',
-  'Comment installer Vezoria sur Android : depuis le Play Store, gratuitement. Puis choisir sa langue, son prénom et sa couleur.',
-  'Installer Vezoria sur Android', 'Sur Android, Vezoria s’installe depuis le Play Store, comme n’importe quelle appli.',
-  [('Depuis le Play Store', '<ol><li>Ouvre le <b>Play Store</b>.</li><li>Cherche <b>Vezoria</b>.</li><li>Touche <b>Installer</b>.</li></ol>'),
+feat('installer-vezoria-android', 'Installer Vezoria sur Android (en 30 secondes)',
+  'Comment installer Vezoria sur Android : ouvrir le lien dans Chrome, puis « Installer l’application ». Gratuit, sans pub. Puis choisir sa langue, son prénom et sa couleur.',
+  'Installer Vezoria sur Android', 'Sur Android, Vezoria s’installe depuis Chrome, en trois gestes, et s’utilise ensuite comme n’importe quelle appli.',
+  [('Les trois gestes', '<ol><li>Ouvre le lien de Vezoria dans <b>Chrome</b>.</li><li>Touche le menu <b>⋮</b> (en haut à droite).</li><li>Choisis <b>« Installer l’application »</b> (ou « Ajouter à l’écran d’accueil »), puis <b>« Installer »</b>.</li></ol><p>Chrome propose parfois lui-même « Installer Vezoria » en bas de l’écran : touche simplement le bouton.</p>'),
+   ('Toujours depuis l’icône', '<p>Ouvre ensuite Vezoria depuis son icône : c’est là que ton carnet est rangé, et les notifications fonctionnent.</p>'),
    ('Au premier lancement', '<p>Choisis ta langue et ta devise, puis ton prénom et ta couleur. Tu peux aussi commencer avec le voyage de démo.</p>')],
   [('mes-voyages','Tes voyages dans Vezoria')],
   ['installer-vezoria-iphone','installer-vezoria-pc','guide-utilisateur'])
