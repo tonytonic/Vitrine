@@ -16,7 +16,7 @@ LAUNCH    = 'novembre 2026'
 APP    = 'https://vezoria.pages.dev/'                # l'appli (iPhone : à ajouter à l'écran d'accueil)
 PLAY   = 'https://play.google.com/store/apps/details?id=fr.vezoria.app'
 # PLAY_LIVE : True le jour où Google Play publie l'appli. D'ici là, Android installe l'appli web (APP) depuis Chrome.
-PLAY_LIVE = False
+PLAY_LIVE = True
 AND    = PLAY if PLAY_LIVE else APP
 AND_LBL = '🤖 Android · Play Store' if PLAY_LIVE else '🤖 Android · installer depuis Chrome'
 LEGAL  = 'mentions-legales'                          # pages du site (l’appli a les siennes)
@@ -172,7 +172,7 @@ def footer():
     dst = '<div><b>Destinations</b><a href="destinations">Toutes les destinations</a>' + ''.join(f'<a href="{DST.th_slug(t)}">{E(DST.THEMES[t][0])}</a>' for t in ['plage', 'ville', 'nature', 'romantique']) + ''.join(f'<a href="{DST.mo_slug(m)}">Où partir en {DST.MOIS[m-1]}</a>' for m in NEXT3) + '</div>'
     return f'''<footer class="foot"><div class="air"></div><div class="wrap"><div class="fcols">{dst}{cols}</div>
 <div class="fbot"><span>Vezoria · le carnet de voyage qu’on remplit à plusieurs</span><span><a href="guides">Tous les guides</a> · <a href="guide-utilisateur">Mode d’emploi</a> · <a href="{LEGAL}">Mentions légales</a> · <a href="{PRIV}">Confidentialité</a></span></div></div></footer>
-<script src="assets/site.js?v=7" defer></script></body></html>'''
+<script src="assets/site.js?v=9" defer></script></body></html>'''
 
 def slug_cat(c): return DST.slugify(c)
 ICON = {'Découvrir':'✨','Préparer':'🧭','Types de voyage':'🧳','Budget':'💸','Checklists':'✅','Partager':'👀','Voyager':'📍','Se souvenir':'📸','L’appli':'📱','Destinations':'🌍'}
