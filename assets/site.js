@@ -16,6 +16,37 @@
     var close = function(){ d.remove(); document.body.style.overflow = ''; };
     d.querySelector('.vz-bg').onclick = close; d.querySelector('.vz-x').onclick = close;
   }
+
+  // 🌐 Traduction automatique (Google Traduction, seulement si on la demande : rien n’est chargé avant le clic)
+  var LANGS = [['en','🇬🇧','English'],['es','🇪🇸','Español'],['de','🇩🇪','Deutsch'],['it','🇮🇹','Italiano'],['pt','🇵🇹','Português'],['nl','🇳🇱','Nederlands'],['pl','🇵🇱','Polski'],['ru','🇷🇺','Русский'],['uk','🇺🇦','Українська'],['tr','🇹🇷','Türkçe'],['ar','🇸🇦','العربية'],['zh-CN','🇨🇳','中文'],['ja','🇯🇵','日本語'],['ko','🇰🇷','한국어']];
+  var onTr = /\.translate\.goog$/.test(location.hostname);
+  var curTr = (location.search.match(/[?&]_x_tr_tl=([^&]+)/) || [])[1] || '';
+  function origUrl(){ var h = onTr ? location.hostname.replace(/\.translate\.goog$/, '').replace(/--/g, '\u0000').replace(/-/g, '.').replace(/\u0000/g, '-') : location.hostname;
+    var q = location.search.replace(/[?&]_x_tr_[a-z]+=[^&]*/g, '').replace(/^&/, '?'); return 'https://' + h + location.pathname + q + location.hash; }
+  function trUrl(lg){ var o = new URL(origUrl()); var h = o.hostname.replace(/-/g, '--').replace(/\./g, '-') + '.translate.goog';
+    var q = o.search ? o.search + '&' : '?'; return 'https://' + h + o.pathname + q + '_x_tr_sl=fr&_x_tr_tl=' + lg + '&_x_tr_hl=' + lg + '&_x_tr_pto=wapp' + o.hash; }
+  function langSheet(){
+    sheet('<h2>🌐 Langue · Language</h2><p class="vz-small">Traduction automatique de Google · Automatic translation by Google</p><div class="vz-langs">' +
+      LANGS.map(function(l){ return '<a href="' + trUrl(l[0]) + '" lang="' + l[0] + '"' + (curTr === l[0] ? ' class="on"' : '') + '><span>' + l[1] + '</span>' + l[2] + '</a>'; }).join('') +
+      '</div>' + (onTr ? '<a class="vz-orig" href="' + origUrl() + '">🇫🇷 Version originale en français</a>' : ''));
+  }
+  // le bouton 🌐 est ajouté ici (pas besoin de toucher les 266 pages)
+  (function(){ var nav = document.querySelector('header.top nav'); if(!nav || nav.querySelector('[data-lang]')) return;
+    var b = document.createElement('button'); b.type = 'button'; b.className = 'lang-mini'; b.setAttribute('data-lang', ''); b.setAttribute('aria-label', 'Langue · Language · Idioma'); b.textContent = '🌐';
+    var last = nav.lastElementChild; if(last && /cta-mini/.test(last.className)) nav.insertBefore(b, last); else nav.appendChild(b); })();
+  document.querySelectorAll('[data-lang]').forEach(function(b){ b.addEventListener('click', langSheet); });
+  // visiteur dont le téléphone n’est pas en français : on propose une fois sa langue
+  (function(){ if(onTr) return; var nl = (navigator.language || 'fr').toLowerCase(); if(/^fr/.test(nl)) return;
+    // pas de stockage (promis dans la page confidentialité) : on ne le propose qu’en arrivant sur le site
+    try { if(document.referrer && new URL(document.referrer).hostname === location.hostname) return; } catch(e){}
+    var code = nl.indexOf('zh') === 0 ? 'zh-CN' : nl.slice(0, 2); var L = LANGS.filter(function(l){ return l[0] === code; })[0] || LANGS[0];
+    var b = document.querySelector('[data-lang]'); if(b) b.classList.add('pulse');
+    var t = document.createElement('div'); t.id = 'vz-lgtip'; t.setAttribute('lang', L[0]);
+    t.innerHTML = '<span>' + L[1] + '</span><span style="flex:1">' + L[2] + ' ?</span><a href="' + trUrl(L[0]) + '">🌐 ' + L[2] + '</a><button type="button" aria-label="✕">✕</button>';
+    document.body.appendChild(t);
+    var done = function(){ t.remove(); };
+    t.querySelector('button').onclick = done; t.querySelector('a').addEventListener('click', done);
+  })();
   function iosSheet(){
     sheet('<h2>Installer Vezoria sur iPhone</h2>' +
       (safari ? '' : '<p class="vz-warn">⚠️ Ouvre d’abord cette page dans <b>Safari</b> : l’installation ne marche pas depuis ' + (inApp ? 'le navigateur de cette appli' : 'ce navigateur') + '.</p>') +
