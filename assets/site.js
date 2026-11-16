@@ -1,7 +1,7 @@
 /* Vezoria · site : bouton « Installer » et boutons d'installation selon le téléphone. Aucun pistage, aucun cookie. */
 (function(){ try {
   var PLAY = 'https://play.google.com/store/apps/details?id=fr.vezoria.app', APP = 'https://vezoria.pages.dev/';
-  var PLAY_LIVE = false;   // true le jour où Google Play publie l’appli (et dans outils/generer.py) ; d’ici là, Android installe l’appli web depuis Chrome   // le jour du lancement, si l’appli passe sur app.vezoria.fr : changer APP ici et dans outils/generer.py
+  var PLAY_LIVE = true;   // true le jour où Google Play publie l’appli (et dans outils/generer.py) ; d’ici là, Android installe l’appli web depuis Chrome   // le jour du lancement, si l’appli passe sur app.vezoria.fr : changer APP ici et dans outils/generer.py
   var ua = navigator.userAgent || '';
   var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var and = /Android/i.test(ua);
