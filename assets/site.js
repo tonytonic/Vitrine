@@ -1,6 +1,7 @@
 /* Vezoria · site : bouton « Installer » et boutons d'installation selon le téléphone. Aucun pistage, aucun cookie. */
 (function(){ try {
-  var PLAY = 'https://play.google.com/store/apps/details?id=fr.vezoria.app', APP = 'https://vezoria.pages.dev/';   // le jour du lancement, si l’appli passe sur app.vezoria.fr : changer APP ici et dans outils/generer.py
+  var PLAY = 'https://play.google.com/store/apps/details?id=fr.vezoria.app', APP = 'https://vezoria.pages.dev/';
+  var PLAY_LIVE = false;   // true le jour où Google Play publie l’appli (et dans outils/generer.py) ; d’ici là, Android installe l’appli web depuis Chrome   // le jour du lancement, si l’appli passe sur app.vezoria.fr : changer APP ici et dans outils/generer.py
   var ua = navigator.userAgent || '';
   var ios = /iPhone|iPad|iPod/.test(ua) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
   var and = /Android/i.test(ua);
@@ -21,6 +22,13 @@
       '<ol class="vz-steps"><li>Touche <b>« Ouvrir Vezoria »</b> ci-dessous.</li><li>Dans Safari, touche le bouton <b>Partager</b> <span class="vz-ic">⬆︎</span> (le carré avec une flèche).</li><li>Choisis <b>« Sur l’écran d’accueil »</b>, puis <b>« Ajouter »</b>.</li></ol>' +
       '<a class="btn and vz-go" href="' + APP + '">🍏 Ouvrir Vezoria</a><p class="vz-small">Ensuite, ouvre toujours Vezoria depuis son icône.</p>');
   }
+  function andSheet(){
+    var chrome = /Chrome\//.test(ua) && !/SamsungBrowser|EdgA|OPR\/|Firefox/.test(ua) && !inApp;
+    sheet('<h2>Installer Vezoria sur Android</h2>' +
+      (chrome ? '' : '<p class="vz-warn">⚠️ Ouvre d’abord cette page dans <b>Chrome</b> : l’installation marche le mieux depuis Chrome' + (inApp ? ', pas depuis le navigateur de cette appli' : '') + '.</p>') +
+      '<ol class="vz-steps"><li>Touche <b>« Ouvrir Vezoria »</b> ci-dessous.</li><li>Dans Chrome, touche le menu <b>⋮</b> (en haut à droite).</li><li>Choisis <b>« Installer l’application »</b> (ou « Ajouter à l’écran d’accueil »), puis <b>« Installer »</b>.</li></ol>' +
+      '<a class="btn and vz-go" href="' + APP + '">🤖 Ouvrir Vezoria</a><p class="vz-small">Ensuite, ouvre toujours Vezoria depuis son icône.</p>');
+  }
   function pcSheet(){
     var mac = /Macintosh/.test(ua), edge = /Edg\//.test(ua), chrome = /Chrome\//.test(ua) && !edge && !/OPR\//.test(ua), fx = /Firefox\//.test(ua), saf = !chrome && !edge && !fx && /Safari\//.test(ua);
     sheet('<h2>Installer Vezoria sur ordinateur</h2>' +
@@ -31,11 +39,12 @@
   }
   function deskSheet(){
     sheet('<h2>Installer Vezoria</h2><p>Vezoria marche sur ordinateur, sur Android et sur iPhone. Choisis :</p>' +
-      '<div class="vz-two"><a class="btn and vz-go" href="#" data-pc>💻 Sur cet ordinateur</a><a class="btn and vz-go" href="' + PLAY + '">🤖 Android · Play Store</a><a class="btn and vz-go" href="#" data-ios>🍏 iPhone · comment faire</a></div>');
+      '<div class="vz-two"><a class="btn and vz-go" href="#" data-pc>💻 Sur cet ordinateur</a>' + (PLAY_LIVE ? '<a class="btn and vz-go" href="' + PLAY + '">🤖 Android · Play Store</a>' : '<a class="btn and vz-go" href="#" data-and>🤖 Android · comment faire</a>') + '<a class="btn and vz-go" href="#" data-ios>🍏 iPhone · comment faire</a></div>');
     var b = document.querySelector('#vz-sheet [data-ios]'); if(b) b.onclick = function(e){ e.preventDefault(); iosSheet(); };
+    var a = document.querySelector('#vz-sheet [data-and]'); if(a) a.onclick = function(e){ e.preventDefault(); andSheet(); };
     var c = document.querySelector('#vz-sheet [data-pc]'); if(c) c.onclick = function(e){ e.preventDefault(); pcSheet(); };
   }
-  function install(e){ if(e) e.preventDefault(); if(and) location.href = PLAY; else if(ios) iosSheet(); else deskSheet(); }
+  function install(e){ if(e) e.preventDefault(); if(and){ if(PLAY_LIVE) location.href = PLAY; else andSheet(); } else if(ios) iosSheet(); else deskSheet(); }
 
   // bouton « Installer » en haut à droite : décide au moment du toucher
   document.querySelectorAll('[data-store]').forEach(function(x){ x.addEventListener('click', install); });
@@ -44,6 +53,7 @@
   document.querySelectorAll('.cta').forEach(function(c){ var a = c.querySelector('.btn.and'), i = c.querySelector('.btn.ios'), p = c.querySelector('.btn.pc'); if(!a || !i) return;
     i.addEventListener('click', function(e){ e.preventDefault(); iosSheet(); });
     if(p) p.addEventListener('click', function(e){ e.preventDefault(); pcSheet(); });
+    if(!PLAY_LIVE) a.addEventListener('click', function(e){ e.preventDefault(); andSheet(); });
     if(ios){ c.insertBefore(i, a); i.className = 'btn and'; a.className = 'btn ios'; a.style.display = 'none'; if(p) p.style.display = 'none'; }
     else if(and){ i.style.display = 'none'; if(p) p.style.display = 'none'; }
     else if(p){ c.insertBefore(p, a); p.className = 'btn and pc'; a.className = 'btn ios'; } });
