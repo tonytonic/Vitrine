@@ -1,0 +1,26 @@
+VITRINE vezoria.fr — lancement (16/11/2026)
+===========================================
+Seulement les fichiers changés. À pousser tel quel (mêmes dossiers).
+
+CE QUI CHANGE
+  • Accès ouvert : PRELAUNCH = False. L'annonce « Lancement courant novembre »
+    et le formulaire « Me prévenir » disparaissent ; les boutons d'installation
+    reviennent sur les 266 pages.
+  • Android ne mène plus à Google Play : le bouton « 🤖 Android · installer
+    depuis Chrome » ouvre une fenêtre qui explique les 3 gestes (Chrome → ⋮ →
+    « Installer l'application ») puis ouvre https://vezoria.pages.dev/.
+    Le guide « Installer Vezoria sur Android » et les questions fréquentes
+    sont réécrits pareil.
+  • Mentions légales : N° de TVA intracommunautaire FR43 132 459 298.
+  • Le jour où Google publie l'appli : PLAY_LIVE = True dans
+    outils/generer.py ET dans assets/site.js, puis régénérer (le robot GitHub
+    le fait tout seul quand outils/ change).
+
+TESTÉ
+  • 266 pages régénérées sans erreur ; plus aucun lien Google Play dans les pages.
+  • Accueil sur Android (Pixel 7), iPhone 13 et ordinateur : le bon bouton
+    s'affiche, la bonne fenêtre s'ouvre, aucune erreur JavaScript.
+PAS TESTÉ
+  • Sur un vrai téléphone ; l'export de la liste d'attente (inchangé).
+  • À faire de ton côté : envoyer l'e-mail de lancement aux inscrits de la liste,
+    puis l'effacer (promis dans la page confidentialité).
